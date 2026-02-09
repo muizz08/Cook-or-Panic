@@ -9,15 +9,15 @@ public class VrCutter : MonoBehaviour
 
     [SerializeField]
     [Tooltip("The blade object")]
-    private GameObject _blade = null;
+    private GameObject _blade;
 
     [SerializeField]
     [Tooltip("The empty game object located at the tip of the blade")]
-    private GameObject _tip = null;
+    private GameObject _tip;
 
     [SerializeField]
     [Tooltip("The empty game object located at the base of the blade")]
-    private GameObject _base = null;
+    private GameObject _base;
 
     [SerializeField]
     private GameObject _meshParent;
