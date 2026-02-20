@@ -53,7 +53,7 @@ public class Cutable : MonoBehaviour
         {
             _useGravity = value;
         }
-    }
+    } 
 
     public bool ShareVertices
     {
