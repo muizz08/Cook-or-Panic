@@ -3,22 +3,22 @@ using UnityEngine.AI;
 
 public class HeadChef : MonoBehaviour
 {
-    private NavMeshAgent agent;
-    private Animator animator;
+    private NavMeshAgent _agent;
+    private Animator _animator;
 
     [Header("Patrol Settings")]
-    [SerializeField] float walkRange = 10f;
-    [SerializeField] LayerMask groundLayer;
+    [SerializeField] float _walkRange = 10f;
+    [SerializeField] LayerMask _groundLayer;
 
-    private Vector3 destPoint;
-    private bool walkPointSet;
+    private Vector3 _destPoint;
+    private bool _walkPointSet;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
 
-        if (agent == null)
+        if (_agent == null)
         {
             Debug.LogError("NavMeshAgent TIDAK ditemukan di " + gameObject.name);
             enabled = false;
@@ -34,30 +34,30 @@ public class HeadChef : MonoBehaviour
 
     void Patrol()
     {
-        if (!walkPointSet)
+        if (!_walkPointSet)
             SearchForDest();
 
-        if (walkPointSet)
-            agent.SetDestination(destPoint);
+        if (_walkPointSet)
+            _agent.SetDestination(_destPoint);
 
         // Gunakan remainingDistance (lebih akurat)
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-            walkPointSet = false;
+        if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
+            _walkPointSet = false;
     }
 
     void UpdateAnimation()
     {
         bool isWalking =
-        agent.hasPath &&
-        agent.remainingDistance > agent.stoppingDistance;
+        _agent.hasPath &&
+        _agent.remainingDistance > _agent.stoppingDistance;
 
-        animator.SetBool("isWalking", isWalking);
+        _animator.SetBool("isWalking", isWalking);
     }
 
     void SearchForDest()
     {
-        float randomZ = Random.Range(-walkRange, walkRange);
-        float randomX = Random.Range(-walkRange, walkRange);
+        float randomZ = Random.Range(_walkRange, _walkRange);
+        float randomX = Random.Range(_walkRange, _walkRange);
 
         Vector3 randomPoint = new Vector3(
             transform.position.x + randomX,
@@ -66,10 +66,10 @@ public class HeadChef : MonoBehaviour
         );
 
         // Raycast ke bawah + LayerMask BENAR
-        if (Physics.Raycast(randomPoint, Vector3.down, out RaycastHit hit, 10f, groundLayer))
+        if (Physics.Raycast(randomPoint, Vector3.down, out RaycastHit hit, 10f, _groundLayer))
         {
-            destPoint = hit.point;
-            walkPointSet = true;
+            _destPoint = hit.point;
+            _walkPointSet = true;
         }
     }
 }
