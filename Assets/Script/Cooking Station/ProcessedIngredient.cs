@@ -32,6 +32,10 @@ namespace CookOrPanic.ProcessedIngredient
         {
 
         }
+        public FoodState GetState()
+        {
+            return _currentState;
+        }
     }
 
 }

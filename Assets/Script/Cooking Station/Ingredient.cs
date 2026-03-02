@@ -24,9 +24,9 @@ namespace CookOrPanic.Ingredient
         public IngredientType _ingredientType; 
 
 
-        public void GetIngredientType()
+        public IngredientType GetIngredientType()
         {
-
+            return _ingredientType;
         }
     }
 }
