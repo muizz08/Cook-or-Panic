@@ -7,6 +7,7 @@ namespace CookOrPanic.Food
 {
 
     using CookOrPanic.ProcessedIngredient;
+    using CookOrPanic.Recipe;
 
     public enum FoodType
     {
@@ -15,20 +16,24 @@ namespace CookOrPanic.Food
     }
     public class Food : MonoBehaviour
     {
-        private FoodType _foodType;
-        private FoodState _foodState;
+        public FoodType _foodType;
+        public FoodState _foodState;
+        public Recipe _recipeOrigin;
 
 
-        public void Initialze (FoodType type, FoodState state)
+        public void Initialze(FoodType type, FoodState state, Recipe recipe)
         {
             _foodType = type;
             _foodState = state;
+            _recipeOrigin = recipe;
         }
 
         public int GetPoint()
         {
             return 0;
         }
+
     }
 }
+
 
