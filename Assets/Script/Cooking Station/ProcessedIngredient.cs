@@ -18,6 +18,12 @@ namespace CookOrPanic.ProcessedIngredient
  
         public FoodState _currentState;
 
+        public IngredientType ingredientType
+        {
+            get { return _ingredientType; } // Mengambil nilai dari class Parent (Ingredient)
+            set { _ingredientType = value; }
+        }
+
         public void Raw()
         {
 

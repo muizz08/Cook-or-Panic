@@ -14,7 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultFoodType: 1
   _requirements:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - _ingredientType: 2
+    _requiredState: 0
+    _requiredAmount: 0
+  - _ingredientType: 0
+    _requiredState: 0
+    _requiredAmount: 0
+  - _ingredientType: 0
+    _requiredState: 0
+    _requiredAmount: 0
+  _resultPrefabs: []
   _cookedScore: 0

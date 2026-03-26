@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace CookOrPanic.Panel
 {
+    using CookOrPanic.TutorialManager;
     public class Panel : MonoBehaviour
     {
         public enum PanelType
@@ -15,13 +16,15 @@ namespace CookOrPanic.Panel
             PanelKlikPanduan,
             PanelResep,
             PanelKlikResep,
-            PanelNavigation
+            PanelNavigation,
+            PanelTriggerLanjut,
+            PanelPotong,
         }
 
         public PanelType _panelType;
         public Image _panelImage;
-       
 
+       
         public void Start()
         {
 
@@ -53,31 +56,25 @@ namespace CookOrPanic.Panel
         {
             _panelImage.gameObject.SetActive(true);
 
-            _panelImage.DOKill();
-            _panelImage.rectTransform.DOKill();
+            // LOGIKA TUTORIAL BERURUTAN
+            if (_panelType == PanelType.PanelPanduan)
+            {
+                // Beritahu manager bahwa Panduan sudah dibuka
+                TutorialManager.Instance?.OnBookOpened(PanelType.PanelPanduan);
 
-            // Start kecil & transparan
+              
+            }
+            else if (_panelType == PanelType.PanelResep)
+            {
+                // Beritahu manager bahwa Resep sudah dibuka
+                TutorialManager.Instance?.OnBookOpened(PanelType.PanelResep);
+
+            }
+
+            // --- Animasi DOTween (Tetap sama) ---
             _panelImage.rectTransform.localScale = Vector3.zero;
-            _panelImage.color = new Color(1, 1, 1, 0);
-
-            Sequence seq = DOTween.Sequence();
-
-            seq.Append(
-                _panelImage.rectTransform
-                    .DOScale(1.1f, 0.25f)
-                    .SetEase(Ease.OutQuad)
-            );
-
-            seq.Append(
-                _panelImage.rectTransform
-                    .DOScale(1f, 0.15f)
-                    .SetEase(Ease.InOutSine)
-            );
-
-            seq.Join(
-                _panelImage
-                    .DOFade(1f, 0.3f)
-            );
+            _panelImage.rectTransform.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
+            _panelImage.DOFade(1f, 0.3f);
         }
 
         public void HidePanel()
@@ -127,5 +124,17 @@ namespace CookOrPanic.Panel
                 .SetEase(Ease.InOutSine)
                 .SetLoops(-1, LoopType.Yoyo);
         }
+
+        // Tambahkan ini di dalam class Panel : MonoBehaviour
+        private void OnTriggerEnter(Collider other)
+        {
+            // Jika objek ini adalah tipe PanelTriggerLanjut dan diinjak Player
+            if (_panelType == PanelType.PanelTriggerLanjut && other.CompareTag("Player"))
+            {
+                ShowPanel(); // Menjalankan animasi DOTween yang sudah ada
+            }
+        }
     }
+
+
 }

@@ -14,6 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultFoodType: 0
   _requirements:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - _ingredientType: 2
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientType: 6
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientType: 10
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientType: 12
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientType: 8
+    _requiredState: 1
+    _requiredAmount: 1
+  _resultPrefabs:
+  - {fileID: 5485417267940259033, guid: 2299dda3913a29045b5f70b3203888e9, type: 3}
+  _cookedScore: 15

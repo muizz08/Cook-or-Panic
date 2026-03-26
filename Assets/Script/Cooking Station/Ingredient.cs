@@ -7,8 +7,8 @@ namespace CookOrPanic.Ingredient
     public enum IngredientType
     {
         Telur,
-        IkanGiling,
-        Tepung,
+        DagingGiling,
+        Terigu,
         Air,
         BawangMerah,
         BawangPutih,
@@ -17,7 +17,11 @@ namespace CookOrPanic.Ingredient
         PenyedapRasa,
         BackingPowder,
         Kentang, 
-        Santan
+        Santan,
+        KacangHijau,
+        TepungRoti,
+        TepungBeras
+
     }
     public class Ingredient : MonoBehaviour
     {

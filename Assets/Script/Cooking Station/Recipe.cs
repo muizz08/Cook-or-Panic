@@ -16,6 +16,7 @@ namespace CookOrPanic.Recipe
     {
         public FoodType _resultFoodType;
         [SerializeField] public List<RecipeRequirement> _requirements;
+        [SerializeField] public List<GameObject> _resultPrefabs;
         [SerializeField] public int _cookedScore;
 
 

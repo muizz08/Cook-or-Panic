@@ -3,91 +3,97 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GeneratedMesh
+namespace CookOrPanic.GeneratedMesh
 {
-
-    /// <summary>
-    /// Slice the object by the plane 
-    /// </summary>
-    /// <param name="plane"></param>
-    /// <param name="objectToCut"></param>
-    /// <returns></returns>
-    public static GameObject[] Slice(Plane plane, GameObject objectToCut)
+    using CookOrPanic.SliceableObject;
+    using CookOrPanic.MeshSlicer;
+    public class GeneratedMesh
     {
-        //Get the current mesh and its verts and tris
-        Mesh mesh = objectToCut.GetComponent<MeshFilter>().mesh;
-        var a = mesh.GetSubMesh(0);
-        Cutable sliceable = objectToCut.GetComponent<Cutable>();
 
-        if (sliceable == null)
+        /// <summary>
+        /// Slice the object by the plane 
+        /// </summary>
+        /// <param name="plane"></param>
+        /// <param name="objectToCut"></param>
+        /// <returns></returns>
+        public static GameObject[] Slice(Plane plane, GameObject objectToCut)
         {
-            throw new NotSupportedException("Cannot slice non sliceable object, add the sliceable script to the object or inherit from sliceable to support slicing");
+            //Get the current mesh and its verts and tris
+            Mesh mesh = objectToCut.GetComponent<MeshFilter>().mesh;
+            var a = mesh.GetSubMesh(0);
+            SliceableObject sliceable = objectToCut.GetComponent<SliceableObject>();
+
+            if (sliceable == null)
+            {
+                throw new NotSupportedException("Cannot slice non sliceable object, add the sliceable script to the object or inherit from sliceable to support slicing");
+            }
+
+            //Create left and right slice of hollow object
+            MeshSlicer slicesMeta = new MeshSlicer(plane, mesh, sliceable.IsSolid, sliceable.ReverseWireTriangles, sliceable.ShareVertices, sliceable.SmoothVertices);
+
+            GameObject positiveObject = CreateMeshGameObject(objectToCut);
+            positiveObject.name = string.Format("{0}_positive", objectToCut.name);
+
+            GameObject negativeObject = CreateMeshGameObject(objectToCut);
+            negativeObject.name = string.Format("{0}_negative", objectToCut.name);
+
+            var positiveSideMeshData = slicesMeta.PositiveSideMesh;
+            var negativeSideMeshData = slicesMeta.NegativeSideMesh;
+
+            positiveObject.GetComponent<MeshFilter>().mesh = positiveSideMeshData;
+            negativeObject.GetComponent<MeshFilter>().mesh = negativeSideMeshData;
+
+            SetupCollidersAndRigidBodys(ref positiveObject, positiveSideMeshData, sliceable.UseGravity);
+            SetupCollidersAndRigidBodys(ref negativeObject, negativeSideMeshData, sliceable.UseGravity);
+
+            return new GameObject[] { positiveObject, negativeObject };
         }
 
-        //Create left and right slice of hollow object
-        Cutter slicesMeta = new Cutter(plane, mesh, sliceable.IsSolid, sliceable.ReverseWireTriangles, sliceable.ShareVertices, sliceable.SmoothVertices);
+        /// <summary>
+        /// Creates the default mesh game object.
+        /// </summary>
+        /// <param name="originalObject">The original object.</param>
+        /// <returns></returns>
+        private static GameObject CreateMeshGameObject(GameObject originalObject)
+        {
+            var originalMaterial = originalObject.GetComponent<MeshRenderer>().materials;
 
-        GameObject positiveObject = CreateMeshGameObject(objectToCut);
-        positiveObject.name = string.Format("{0}_positive", objectToCut.name);
+            GameObject meshGameObject = new GameObject();
+            SliceableObject originalSliceable = originalObject.GetComponent<SliceableObject>();
 
-        GameObject negativeObject = CreateMeshGameObject(objectToCut);
-        negativeObject.name = string.Format("{0}_negative", objectToCut.name);
+            meshGameObject.AddComponent<MeshFilter>();
+            meshGameObject.AddComponent<MeshRenderer>();
+            SliceableObject sliceable = meshGameObject.AddComponent<SliceableObject>();
 
-        var positiveSideMeshData = slicesMeta.PositiveSideMesh;
-        var negativeSideMeshData = slicesMeta.NegativeSideMesh;
+            sliceable.IsSolid = originalSliceable.IsSolid;
+            sliceable.ReverseWireTriangles = originalSliceable.ReverseWireTriangles;
+            sliceable.UseGravity = originalSliceable.UseGravity;
 
-        positiveObject.GetComponent<MeshFilter>().mesh = positiveSideMeshData;
-        negativeObject.GetComponent<MeshFilter>().mesh = negativeSideMeshData;
+            meshGameObject.GetComponent<MeshRenderer>().materials = originalMaterial;
 
-        SetupCollidersAndRigidBodys(ref positiveObject, positiveSideMeshData, sliceable.UseGravity);
-        SetupCollidersAndRigidBodys(ref negativeObject, negativeSideMeshData, sliceable.UseGravity);
+            meshGameObject.transform.localScale = originalObject.transform.localScale;
+            meshGameObject.transform.rotation = originalObject.transform.rotation;
+            meshGameObject.transform.position = originalObject.transform.position;
 
-        return new GameObject[] { positiveObject, negativeObject };
+            meshGameObject.tag = originalObject.tag;
+
+            return meshGameObject;
+        }
+
+        /// <summary>
+        /// Add mesh collider and rigid body to game object
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <param name="mesh"></param>
+        private static void SetupCollidersAndRigidBodys(ref GameObject gameObject, Mesh mesh, bool useGravity)
+        {
+            MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = mesh;
+            meshCollider.convex = true;
+
+            var rb = gameObject.AddComponent<Rigidbody>();
+            rb.useGravity = useGravity;
+        }
     }
 
-    /// <summary>
-    /// Creates the default mesh game object.
-    /// </summary>
-    /// <param name="originalObject">The original object.</param>
-    /// <returns></returns>
-    private static GameObject CreateMeshGameObject(GameObject originalObject)
-    {
-        var originalMaterial = originalObject.GetComponent<MeshRenderer>().materials;
-
-        GameObject meshGameObject = new GameObject();
-        Cutable originalSliceable = originalObject.GetComponent<Cutable>();
-
-        meshGameObject.AddComponent<MeshFilter>();
-        meshGameObject.AddComponent<MeshRenderer>();
-        Cutable sliceable = meshGameObject.AddComponent<Cutable>();
-
-        sliceable.IsSolid = originalSliceable.IsSolid;
-        sliceable.ReverseWireTriangles = originalSliceable.ReverseWireTriangles;
-        sliceable.UseGravity = originalSliceable.UseGravity;
-
-        meshGameObject.GetComponent<MeshRenderer>().materials = originalMaterial;
-
-        meshGameObject.transform.localScale = originalObject.transform.localScale;
-        meshGameObject.transform.rotation = originalObject.transform.rotation;
-        meshGameObject.transform.position = originalObject.transform.position;
-
-        meshGameObject.tag = originalObject.tag;
-
-        return meshGameObject;
-    }
-
-    /// <summary>
-    /// Add mesh collider and rigid body to game object
-    /// </summary>
-    /// <param name="gameObject"></param>
-    /// <param name="mesh"></param>
-    private static void SetupCollidersAndRigidBodys(ref GameObject gameObject, Mesh mesh, bool useGravity)
-    {
-        MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
-        meshCollider.sharedMesh = mesh;
-        meshCollider.convex = true;
-
-        var rb = gameObject.AddComponent<Rigidbody>();
-        rb.useGravity = useGravity;
-    }
 }
