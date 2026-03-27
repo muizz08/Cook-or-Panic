@@ -29,6 +29,8 @@ namespace CookOrPanic.CookingStation
         [Header("Cooking References")]
         [SerializeField] private Button _tombolAngkat;
         [SerializeField] private ParticleSystem _foodFumesParticle;
+        [SerializeField] private ParticleSystem _mixingParticle; // Drag particle tepung ke sini
+        
 
         [Header("Station Socket Controllers")]
         [SerializeField] private SocketController _singleSocket; // Ganti tipe data
@@ -71,6 +73,7 @@ namespace CookOrPanic.CookingStation
             if (_tombolAduk != null) _tombolAduk.gameObject.SetActive(false);
             if (_tombolAngkat != null) _tombolAngkat.gameObject.SetActive(false);
             if (_foodFumesParticle != null) _foodFumesParticle.Stop();
+            if(_mixingParticle != null) _mixingParticle.Stop();
 
             // Berlangganan ke event dari Controller
             if (_singleSocket != null)
@@ -122,8 +125,7 @@ namespace CookOrPanic.CookingStation
             {
                 if (ValidateInternal(recipe))
                 {
-                    SpawnFood(recipe);
-                    ClearStation();
+                    StartCoroutine(MixingProcessRoutine(recipe));
                     return;
                 }
             }
@@ -332,6 +334,36 @@ namespace CookOrPanic.CookingStation
             _warningCanvasGroup.DOFade(0f, 0.3f).OnComplete(() => {
                 _warningCanvasGroup.gameObject.SetActive(false);
             });
+        }
+
+        private IEnumerator MixingProcessRoutine(Recipe recipe)
+        {
+            float _mixingDuration = 2.0f;
+            // 1. Matikan tombol aduk agar tidak diklik dua kali
+            if (_tombolAduk != null) _tombolAduk.gameObject.SetActive(false);
+            ClearStation();
+
+
+            // 2. Munculkan Particle Efek Mengadon
+            if (_mixingParticle != null)
+            {
+                _mixingParticle.Play();
+            }
+
+            // 3. Tunggu selama beberapa detik (durasi mengaduk)
+            yield return new WaitForSeconds(_mixingDuration);
+
+            // 4. Matikan Particle (opsional, tergantung setting looping particle-mu)
+            if (_mixingParticle != null)
+            {
+                _mixingParticle.Stop();
+            }
+
+            // 5. Baru munculkan Prefab Makanan dan bersihkan station
+            SpawnFood(recipe);
+            
+
+            Debug.Log("<color=green>CookingStation:</color> Selesai mengaduk, makanan muncul!");
         }
 
         public void ClearStation()

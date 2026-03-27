@@ -7,6 +7,8 @@ namespace CookOrPanic.SocketController
 {
     using CookOrPanic.Food;
     using CookOrPanic.ProcessedIngredient;
+
+
     [RequireComponent(typeof(XRSocketInteractor))]
     public class SocketController : MonoBehaviour
     {
@@ -15,6 +17,7 @@ namespace CookOrPanic.SocketController
         // Event yang akan didengarkan oleh CookingStation
         public event Action<ProcessedIngredient> OnIngredientEntered;
         public event Action<Food, GameObject> OnFoodEntered;
+        public Action<GameObject> OnObjectEntered;
         public event Action OnObjectRemoved;
 
         private void Awake() => _socket = GetComponent<XRSocketInteractor>();
@@ -58,12 +61,15 @@ namespace CookOrPanic.SocketController
             {
                 OnFoodEntered?.Invoke(food, obj);
             }
+
+            OnObjectEntered?.Invoke(obj);
         }
 
         private void HandleSelectExited(SelectExitEventArgs args)
         {
             OnObjectRemoved?.Invoke();
         }
+
 
         // Fungsi pembantu jika ingin mengeluarkan benda secara paksa via code
         public void ForceEject()

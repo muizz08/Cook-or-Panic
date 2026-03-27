@@ -26,7 +26,7 @@ namespace CookOrPanic.TutorialManager
     {
         public static TutorialManager Instance;
 
-        public enum TutorialStep { Panduan, Resep, AmbilBahan, MasakMakanan, HidangkanMakanan, SimpanKenampan, SajikanMakanan}
+        public enum TutorialStep { Panduan, Resep, AmbilBahan, MasakMakanan, HidangkanMakanan, SimpanKenampan, SajikanMakanan, SimpanNampanBalik }
 
 
         [Header("Current Progress")]
@@ -49,16 +49,24 @@ namespace CookOrPanic.TutorialManager
         public GameObject _panelNampan;
         public GameObject _instruksiMejaSaji;
         public GameObject _panelSelesaiFinal;
+        public GameObject _instruksiKembalikanNampan;
+
+
+        [Header("Socket")]
         [SerializeField] private SocketController _foodSocket;
         [SerializeField] private SocketController _oilSocket;
         [SerializeField] private SocketController _plateSocket;
+        [SerializeField] private SocketController _nampanSocket;
         [SerializeField] private SocketController _scoreSocket;
+        [SerializeField] private SocketController _WindowSocket;
+        [SerializeField] private SocketController _kembaliNampan;
+
 
         [Header("Checklist System")]
         // Ini adalah LIST yang kamu minta
         public List<IngredientUI> ingredientChecklist = new List<IngredientUI>();
 
-      
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -95,6 +103,22 @@ namespace CookOrPanic.TutorialManager
             {
                 _plateSocket.OnFoodEntered += HandleFoodPlated;
             }
+            // Subscribe Socket Nampan (Piring masuk ke Nampan)
+            if (_nampanSocket != null)
+            {
+                _nampanSocket.OnObjectEntered += HandlePlateInTray;
+            }
+
+            if (_WindowSocket != null)
+            {
+                // Berlangganan ke event masuknya nampan ke jendela saji
+                _WindowSocket.OnObjectEntered += HandleNampanDisajikan;
+            }
+
+            if (_WindowSocket != null)
+            {
+                _kembaliNampan.OnObjectEntered += OnNampanKembali; // Pastikan ini sesuai dengan event yang kamu punya di SocketController
+            }
 
         }
 
@@ -120,8 +144,9 @@ namespace CookOrPanic.TutorialManager
             if (currentStep == TutorialStep.AmbilBahan)
             {
                 // Arrow bahan mati, Arrow talenan (CutFood) NYALA
-                if (_arrowIndicatorIngredient != null) _arrowIndicatorIngredient.SetActive(false);
-                if (_arrowIndicatorCutFood != null) _arrowIndicatorCutFood.SetActive(true);
+                _arrowIndicatorIngredient.SetActive(false);
+                _arrowIndicatorCutFood.SetActive(true);
+                _panelCheckList.SetActive(true); 
             }
         }
 
@@ -139,6 +164,10 @@ namespace CookOrPanic.TutorialManager
                     else _panelLanjut.SetActive(false);
                 }
             }
+            _instruksiResep.SetActive(false);
+            _arrowIndicatorBook.SetActive(false);
+            _arrowIndicatorIngredient.SetActive(false);
+
         }
         // --- FUNGSI TRIGGER UTAMA: Dipanggil saat bahan masuk ke Socket ---
         private void HandleFoodPlaced(ProcessedIngredient ingredient)
@@ -162,6 +191,7 @@ namespace CookOrPanic.TutorialManager
                         item.checkmark.transform.localScale = Vector3.zero;
                         item.checkmark.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
                     }
+                   
                 }
 
                 // Jika ada satu saja yang belum terkumpul, tandai belum lengkap
@@ -169,6 +199,7 @@ namespace CookOrPanic.TutorialManager
                 {
                     allIngredientsNowDone = false;
                 }
+                
             }
 
             // 3. LOGIKA UTAMA: Matikan Panel Checklist HANYA jika semua sudah terkumpul
@@ -177,9 +208,7 @@ namespace CookOrPanic.TutorialManager
             {
                 if (_panelCheckList != null)
                 {
-                    // Opsi 1: Langsung hilang
-                    // _panelCheckList.SetActive(false); 
-
+                   
                     // Opsi 2: Hilang halus dengan DOTween (Jika ada CanvasGroup)
                     CanvasGroup cg = _panelCheckList.GetComponent<CanvasGroup>();
                     if (cg != null)
@@ -191,8 +220,8 @@ namespace CookOrPanic.TutorialManager
                         _panelCheckList.SetActive(false);
                     }
                 }
+                _arrowIndicatorCutFood.SetActive(false);
 
-              
                 Debug.Log("<color=cyan>Tutorial:</color> Checklist selesai dan disembunyikan.");
             }
         }
@@ -206,8 +235,8 @@ namespace CookOrPanic.TutorialManager
                 currentStep = TutorialStep.MasakMakanan;
 
                 // 2. UI Cleaning: Matikan panel checklist atau panel lanjut jika masih ada
-                if (_instruksiResep != null) _instruksiResep.SetActive(false);
-                if (_panelLanjut != null) _panelLanjut.SetActive(false);
+                _instruksiResep.SetActive(false);
+                _panelLanjut.SetActive(false);
 
                 // 3. Update instruksi dan nyalakan panel masak via UpdateStepUI
                 UpdateStepUI();
@@ -226,14 +255,16 @@ namespace CookOrPanic.TutorialManager
                 if (cg != null)
                 {
                     // Animasi Fade Out
-                    cg.DOFade(0f, 0.5f).OnComplete(() => {
+                    cg.DOFade(0f, 0.5f).OnComplete(() =>
+                    {
                         _panelMasak.SetActive(false);
                     });
                 }
                 else
                 {
                     // Animasi Scale Down jika tidak ada CanvasGroup
-                    _panelMasak.transform.DOScale(Vector3.zero, 0.4f).SetEase(Ease.InBack).OnComplete(() => {
+                    _panelMasak.transform.DOScale(Vector3.zero, 0.4f).SetEase(Ease.InBack).OnComplete(() =>
+                    {
                         _panelMasak.SetActive(false);
                     });
                 }
@@ -283,53 +314,91 @@ namespace CookOrPanic.TutorialManager
         }
         private void HandleFoodPlated(Food food, GameObject obj)
         {
-            // Hanya jalan jika memang sudah di tahap menghidangkan
             if (currentStep == TutorialStep.HidangkanMakanan)
             {
+                // Pindah ke step "Simpan Ke Nampan"
                 currentStep = TutorialStep.SimpanKenampan;
 
-                // 1. Matikan instruksi "Hidangkan"
                 if (_instruksiHidangkan != null) _instruksiHidangkan.SetActive(false);
 
-                // 2. Munculkan Panel Selesai
+                // Munculkan panel/instruksi agar pemain tahu harus menaruh piring ke nampan
                 if (_panelNampan != null)
                 {
                     _panelNampan.SetActive(true);
-
-                    // Animasi Pop Up agar keren
                     _panelNampan.transform.localScale = Vector3.zero;
                     _panelNampan.transform.DOScale(Vector3.one, 0.6f).SetEase(Ease.OutElastic);
-
-                    // Opsional: Fade In background jika ada CanvasGroup
-                    CanvasGroup cg = _panelNampan.GetComponent<CanvasGroup>();
-                    if (cg != null) { cg.alpha = 0; cg.DOFade(1f, 0.4f); }
                 }
 
-                Debug.Log("<color=green>Tutorial Selesai!</color> Makanan sudah di piring.");
+                Debug.Log("<color=yellow>Tutorial:</color> Piring siap, sekarang taruh ke Nampan!");
             }
         }
-
-        private void HandleTrayEnteredScore(Food food, GameObject obj)
+        private void HandlePlateInTray(GameObject obj)
         {
+            Debug.Log("Detector: Objek masuk ke nampan!"); // Cek apakah terpanggil
+
             if (currentStep == TutorialStep.SimpanKenampan)
             {
                 currentStep = TutorialStep.SajikanMakanan;
 
-                // Matikan panel nampan
-                if (_panelNampan != null) _panelNampan.SetActive(false);
+                if (_panelNampan != null)
+                {
+                    _panelNampan.transform.DOScale(Vector3.zero, 0.3f).OnComplete(() => _panelNampan.SetActive(false));
+                }
 
-                UpdateStepUI();
-                Debug.Log("<color=cyan>Tutorial:</color> Nampan siap, sekarang bawa ke Meja Saji!");
+                UpdateStepUI(); // Ini yang akan memunculkan _instruksiMejaSaji
+                Debug.Log("<color=green>Tutorial:</color> Step berubah ke Sajikan Makanan!");
             }
         }
+
+        private void HandleNampanDisajikan(GameObject obj)
+        {
+            if (currentStep == TutorialStep.SajikanMakanan)
+            {
+                currentStep = TutorialStep.SimpanNampanBalik;
+
+
+                if (_instruksiMejaSaji != null) _instruksiMejaSaji.SetActive(false);
+
+
+                UpdateStepUI();
+                Debug.Log("<color=cyan>Tutorial:</color> Makanan disajikan! Sekarang kembalikan nampan.");
+            }
+        }
+        // Panggil fungsi ini dari event OnObjectEntered milik Socket tempat nampan disimpan kembali
+        public void OnNampanKembali(GameObject obj)
+        {
+            // Cek apakah sekarang memang waktunya mengembalikan nampan
+            if (currentStep == TutorialStep.SimpanNampanBalik)
+            {
+
+                // Matikan semua petunjuk kembalikan nampan
+
+                if (_instruksiKembalikanNampan != null)
+                {
+                    _instruksiKembalikanNampan.transform.DOScale(Vector3.zero, 0.3f)
+                        .OnComplete(() => _instruksiKembalikanNampan.SetActive(false));
+                }
+
+                // Munculkan panel Selesai/Final
+                if (_panelSelesaiFinal != null)
+                {
+                    _panelSelesaiFinal.SetActive(true);
+                    _panelSelesaiFinal.transform.localScale = Vector3.zero;
+                    _panelSelesaiFinal.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                }
+
+                Debug.Log("<color=green>Tutorial:</color> Nampan kembali, Tutorial SELESAI!");
+            }
+        }
+
 
         // Jika ada socket lagi di Meja Saji, kamu bisa buat fungsi serupa:
         public void FinishTutorial()
         {
             if (currentStep == TutorialStep.SajikanMakanan)
             {
-                if (_instruksiMejaSaji != null) _instruksiMejaSaji.SetActive(false);
-                if (_panelSelesaiFinal != null) _panelSelesaiFinal.SetActive(true);
+                _instruksiMejaSaji.SetActive(false);
+                _panelSelesaiFinal.SetActive(true);
 
                 Debug.Log("<color=green>Tutorial:</color> Selesai!");
             }
@@ -337,52 +406,55 @@ namespace CookOrPanic.TutorialManager
 
         private void UpdateStepUI()
         {
-            // Reset semua indikator agar bersih
-            if (_instruksiPanduan != null) _instruksiPanduan.SetActive(false);
-            if (_instruksiResep != null) _instruksiResep.SetActive(false);
-            if (_arrowIndicatorBook != null) _arrowIndicatorBook.SetActive(false);
-            if (_arrowIndicatorIngredient != null) _arrowIndicatorIngredient.SetActive(false);
-            if (_arrowIndicatorCutFood != null) _arrowIndicatorCutFood.SetActive(false);
-
+            
             switch (currentStep)
             {
                 case TutorialStep.Panduan:
-                    if (_instruksiPanduan != null) _instruksiPanduan.SetActive(true);
-                    if (_arrowIndicatorBook != null) _arrowIndicatorBook.SetActive(true);
+                    _instruksiPanduan.SetActive(true);
+                    _arrowIndicatorBook.SetActive(true);
                     break;
 
                 case TutorialStep.Resep:
-                    if (_instruksiResep != null) _instruksiResep.SetActive(true);
-                    if (_arrowIndicatorBook != null) _arrowIndicatorBook.SetActive(true);
+                    _instruksiResep.SetActive(true);
+                    _arrowIndicatorBook.SetActive(true);
                     break;
 
                 case TutorialStep.AmbilBahan:
-                    if (_arrowIndicatorIngredient != null) _arrowIndicatorIngredient.SetActive(true);
-                    if (_panelLanjut != null) _panelLanjut.SetActive(true);
+                    _arrowIndicatorIngredient.SetActive(true);
+                    _panelLanjut.SetActive(true);
                     break;
 
                 case TutorialStep.MasakMakanan:
                     // Pastikan panel instruksi sebelumnya mati
-                    if (_instruksiResep != null) _instruksiResep.SetActive(false);
-                    if (_panelLanjut != null) _panelLanjut.SetActive(false);
-                    if (_panelMasak != null) _panelMasak.SetActive(true);
+                    _instruksiResep.SetActive(false);
+                    _panelLanjut.SetActive(false);
+                    _panelMasak.SetActive(true);
                     break;
 
                 case TutorialStep.HidangkanMakanan:
-                    if (_instruksiHidangkan != null) _instruksiHidangkan.SetActive(true);
+                    _instruksiHidangkan.SetActive(true);
                     break;
 
                 case TutorialStep.SimpanKenampan:
-                   if (_panelNampan != null) _panelNampan.SetActive(true);  
+                    _panelNampan.SetActive(true);
                     break;
 
                 case TutorialStep.SajikanMakanan:
                     if (_instruksiMejaSaji != null)
                     {
                         _instruksiMejaSaji.SetActive(true);
-                        // Animasi kecil agar pemain sadar ada instruksi baru
                         _instruksiMejaSaji.transform.localScale = Vector3.zero;
-                        _instruksiMejaSaji.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                        _instruksiMejaSaji.transform.DOScale(Vector3.one, 0.6f).SetEase(Ease.OutElastic);
+                        _kembaliNampan.gameObject.SetActive(true);
+                    }
+                    break;
+
+                case TutorialStep.SimpanNampanBalik:
+                    if (_instruksiKembalikanNampan != null)
+                    {
+                        _instruksiKembalikanNampan.SetActive(true);
+                        _instruksiKembalikanNampan.transform.localScale = Vector3.zero;
+                        _instruksiKembalikanNampan.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
                     }
                     break;
 
