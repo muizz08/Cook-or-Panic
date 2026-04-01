@@ -109,7 +109,7 @@ namespace CookOrPanic.Panel
         }
         
 
-        public void NavAnimation()
+        private void NavAnimation()
         {
             _panelImage.gameObject.SetActive(true);
 

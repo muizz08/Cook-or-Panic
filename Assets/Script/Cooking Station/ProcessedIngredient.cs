@@ -26,18 +26,19 @@ namespace CookOrPanic.ProcessedIngredient
 
         public void Raw()
         {
-
+            _currentState = FoodState.Raw;
         }
 
         public void Cooked()
         {
-
+            _currentState = FoodState.Cooked;
         }
 
         public void OverCook()
         {
-
+            _currentState = FoodState.OverCooked;
         }
+
         public FoodState GetState()
         {
             return _currentState;

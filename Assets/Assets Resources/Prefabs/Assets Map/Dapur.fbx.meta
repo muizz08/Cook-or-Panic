@@ -3,62 +3,12 @@ guid: fe446237ea9b8494095412ee69a4cac5
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: 11e13a0dc7acdfd4bafffe5b4b616b79, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.008
-    second: {fileID: 2100000, guid: 0acd5e8d267bb654891a9b316aa6393a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.009
-    second: {fileID: 2100000, guid: 00cf18603f97bab43bcc31a91b7add6e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.017
-    second: {fileID: 2100000, guid: cb86345c3e63edf478c69f25e45bf87d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.018
-    second: {fileID: 2100000, guid: fd316cce5854f8943b13b746703cdc16, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.169
-    second: {fileID: 2100000, guid: fa94ed1eb60526e4aa66f9d643ed3823, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: batamiggers
-    second: {fileID: 2100000, guid: ac91d2df853f56a4b938746646d06f9f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: batamiggers.001
-    second: {fileID: 2100000, guid: 57319594dfe6d5a45b8b3eb15f1081f4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: batamiggers.002
-    second: {fileID: 2100000, guid: b86f4652f8921114383e678e0570b433, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: batamiggers.004
-    second: {fileID: 2100000, guid: 1d56a10441b93e241a21949962805a6c, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

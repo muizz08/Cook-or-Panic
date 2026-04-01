@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -134,7 +134,217 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_0
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 44
+        width: 1220
+        height: 1016
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6c1d9e2906ce28408743af821aa275f
+      internalID: 1803151535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_1
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 690
+        width: 22
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cbef75ee50fb5d4aadb40aa6be2745f
+      internalID: -1291742665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_2
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 610
+        width: 22
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d05a03d90dea62544b8394fc0190b108
+      internalID: -739562291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_3
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 530
+        width: 22
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f14f96af9c1b41849a9732ea6bd1025d
+      internalID: 38567497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_4
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 450
+        width: 22
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e7c445abf7e0ba488ee7b6838bb1c70
+      internalID: -1642179134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_5
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 370
+        width: 22
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db0c9a9de3e2ef647b57d31ac333f4bd
+      internalID: -952463008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_6
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 290
+        width: 22
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1e94fec402f9fd4980afc2a6b9a1222
+      internalID: -1242269784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_7
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 210
+        width: 22
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce1e4e07c732a2c46b5dc70d997d81af
+      internalID: 1112944167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_8
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 130
+        width: 22
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50106bacad03be0459375e95d328cae0
+      internalID: 910011135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Element_20260326_085048_0000_9
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 50
+        width: 22
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1bc0e21a75f076429d5abf3e3e2c6f5
+      internalID: 503856421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -145,7 +355,17 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Element_20260326_085048_0000_0: 1803151535
+      Element_20260326_085048_0000_1: -1291742665
+      Element_20260326_085048_0000_2: -739562291
+      Element_20260326_085048_0000_3: 38567497
+      Element_20260326_085048_0000_4: -1642179134
+      Element_20260326_085048_0000_5: -952463008
+      Element_20260326_085048_0000_6: -1242269784
+      Element_20260326_085048_0000_7: 1112944167
+      Element_20260326_085048_0000_8: 910011135
+      Element_20260326_085048_0000_9: 503856421
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

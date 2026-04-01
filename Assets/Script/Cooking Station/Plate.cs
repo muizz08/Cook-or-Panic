@@ -5,8 +5,61 @@ using UnityEngine.XR.Interaction.Toolkit;
 namespace CookOrPanic.Plate
 {
     using CookOrPanic.Food;
+    using CookOrPanic.Score;
     public class Plate : MonoBehaviour
     {
+
+        private XRSocketInteractor _socket;
+
+        private void Awake()
+        {
+            _socket = GetComponentInChildren<XRSocketInteractor>();
+        }
+
+        private void OnEnable()
+        {
+            // Berlangganan event saat makanan masuk ke piring
+            _socket.selectEntered.AddListener(OnFoodPlaced);
+        }
+
+        private void OnDisable()
+        {
+            _socket.selectEntered.RemoveListener(OnFoodPlaced);
+        }
+
+        private void OnFoodPlaced(SelectEnterEventArgs args)
+        {
+            GameObject foodObject = args.interactableObject.transform.gameObject;
+            Debug.Log($"Makanan {foodObject.name} masuk ke piring!");
+
+            Food food = foodObject.GetComponent<Food>();
+
+            if (food != null)
+            {
+                Score.Instance.AddScore(food);
+                Debug.Log("Score sekarang: " + Score.Instance.GetCurrentScore());
+            }
+        }
+
+        // Di dalam Plate.cs
+        public void DestroyFoodInSocket()
+        {
+            // Cek apakah ada yang nempel di socket piring
+            if (_socket != null && _socket.hasSelection)
+            {
+                // Ambil makanan yang sedang nempel
+                IXRSelectInteractable foodInteractable = _socket.GetOldestInteractableSelected();
+                GameObject foodObj = foodInteractable.transform.gameObject;
+
+                Debug.Log($"<color=red>Plate:</color> Menghancurkan {foodObj.name} dari socket.");
+
+                // WAJIB: Lepas dari socket secara resmi sebelum dihancurkan
+                _socket.interactionManager.SelectExit(_socket, foodInteractable);
+
+                Destroy(foodObj);
+            }
+        }
+
         // Fungsi ini akan dipanggil oleh Score.cs saat piring masuk socket scoring
         public void LockFoodToPlate()
         {
@@ -30,7 +83,17 @@ namespace CookOrPanic.Plate
                     foodGrab.enabled = false;
                 }
 
+                food.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
                 Debug.Log($"Makanan {food.name} telah dikunci ke piring.");
+
+                Rigidbody plateRb = GetComponent<Rigidbody>();
+                if (plateRb != null)
+                {
+                    plateRb.isKinematic = true;
+                }
+
+                Debug.Log("Piring dikunci tanpa konflik hirarki.");
             }
         }
 
@@ -51,10 +114,6 @@ namespace CookOrPanic.Plate
 
                     // 🔥 jadikan child ke plate
                     food.transform.SetParent(this.transform);
-
-                    // 🔥 reset transform biar nempel
-                    food.transform.localPosition = Vector3.zero;
-                    food.transform.localRotation = Quaternion.identity;
 
                     // 🔥 matikan physics
                     Rigidbody rb = food.GetComponent<Rigidbody>();

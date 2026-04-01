@@ -14,19 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultFoodType: 0
   _requirements:
-  - _ingredientType: 2
+  - _ingredientType: 5
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientType: 6
+  - _ingredientType: 9
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientType: 10
+  - _ingredientType: 13
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientType: 12
+  - _ingredientType: 15
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientType: 8
+  - _ingredientType: 11
     _requiredState: 1
     _requiredAmount: 1
   _resultPrefabs:

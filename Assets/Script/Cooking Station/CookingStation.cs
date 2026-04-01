@@ -4,7 +4,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.UI;
 using System.Collections;
 using DG.Tweening;
-using UnityEngine.Events;
+
 
 namespace CookOrPanic.CookingStation
 {
@@ -14,11 +14,11 @@ namespace CookOrPanic.CookingStation
     using CookOrPanic.Timer;
     using CookOrPanic.CanvasManager;
     using CookOrPanic.SocketController;
-
+    using CookOrPanic.TutorialManager;
+    using CookOrPanic.AudioManager; 
     public class CookingStation : MonoBehaviour
     {
-        [Header("Tutorial Events")]
-        public UnityEvent OnAdukBahanClicked;
+      
 
         [Header("Station References")]
         [SerializeField] private List<Recipe> _availableRecipe;
@@ -29,18 +29,23 @@ namespace CookOrPanic.CookingStation
         [Header("Cooking References")]
         [SerializeField] private Button _tombolAngkat;
         [SerializeField] private ParticleSystem _foodFumesParticle;
-        [SerializeField] private ParticleSystem _mixingParticle; // Drag particle tepung ke sini
+        [SerializeField] private ParticleSystem _mixingParticle; 
         
 
         [Header("Station Socket Controllers")]
-        [SerializeField] private SocketController _singleSocket; // Ganti tipe data
-        [SerializeField] private SocketController _oilSocket;    // Ganti tipe data
-        [SerializeField] private SocketController _drainSocket;  // Ganti tipe data
-
+        [SerializeField] private SocketController _adonanSocket;
+        [SerializeField] private SocketController _oilSocket;    
+        [SerializeField] private SocketController _drainSocket;  
+       
+        [Header("Script References")]
         [SerializeField] private Timer _cookingTimer;
         [SerializeField] private CanvasManager _canvasManager;
         private float _elapsedCookingTime;
         private bool _isStoveOn = false;
+
+        [Header("Audio Sources (Sudah diisi Clip di Inspector)")]
+        
+
 
         private List<IngredientData> _ingredientsInContainer = new List<IngredientData>();
 
@@ -65,7 +70,8 @@ namespace CookOrPanic.CookingStation
         [SerializeField] private List<IngredientVisual> _ingredientVisuals;
 
         [Header("UI Peringatan (DOTween)")]
-        [SerializeField] private CanvasGroup _warningCanvasGroup;
+        [SerializeField] private CanvasGroup _warningOnStoveGas;
+        [SerializeField] private CanvasGroup _warningOffStoveGas;
 
 
         private void Start()
@@ -76,8 +82,8 @@ namespace CookOrPanic.CookingStation
             if(_mixingParticle != null) _mixingParticle.Stop();
 
             // Berlangganan ke event dari Controller
-            if (_singleSocket != null)
-                _singleSocket.OnIngredientEntered += OnIngredientEntered;
+            if (_adonanSocket != null)
+                _adonanSocket.OnIngredientEntered += OnIngredientEntered;
 
             if (_oilSocket != null)
             {
@@ -120,7 +126,7 @@ namespace CookOrPanic.CookingStation
 
         public void TryCook()
         {
-            OnAdukBahanClicked?.Invoke();
+           
             foreach (Recipe recipe in _availableRecipe)
             {
                 if (ValidateInternal(recipe))
@@ -129,6 +135,12 @@ namespace CookOrPanic.CookingStation
                     return;
                 }
             }
+
+            // Contoh pemanggilan di script lain
+            if (TutorialManager.Instance != null)
+            {
+                TutorialManager.Instance.OnFoodLifted();
+            }
             Debug.LogError("[Gagal] Bahan tidak sesuai resep!");
         }
 
@@ -136,9 +148,25 @@ namespace CookOrPanic.CookingStation
 
         public void ToggleStove()
         {
-            // Membalikkan nilai _isStoveOn (jika true jadi false, jika false jadi true)
             _isStoveOn = !_isStoveOn;
 
+            if (_isStoveOn)
+            {
+                TutorialManager.Instance.OnStoveTurnedOn();
+                AudioManager.Instance.PlaySFX("StoveIgnite");
+
+                // HANYA mainkan jika belum bunyi
+                if (!AudioManager.Instance.IsPlaying("StoveLoop"))
+                {
+                    AudioManager.Instance.PlaySFX("StoveLoop");
+                }
+            }
+            else
+            {
+                AudioManager.Instance.StopSFX("StoveLoop");
+                AudioManager.Instance.StopSFX("MasakAudio");
+                TutorialManager.Instance.OnStoveTurnedOff();
+            }
             Debug.Log("Kompor sekarang: " + (_isStoveOn ? "NYALA" : "MATI"));
 
         }
@@ -155,41 +183,46 @@ namespace CookOrPanic.CookingStation
 
         private IEnumerator CookingRoutine(GameObject foodObject, Food foodScript)
         {
-            Debug.Log("CookingRoutine dimulai, menunggu kompor...");
             _tombolAngkat.gameObject.SetActive(true);
 
-            // Loop ini akan terus berjalan selama objek ada di dalam panci
             while (foodScript != null && foodScript._foodState == FoodState.Raw)
             {
+                // 1. CEK KONDISI KOMPOR
                 if (!_isStoveOn)
                 {
-                    ShowWarningWithDOTween();
-                    if (_foodFumesParticle != null && _foodFumesParticle.isPlaying)
-                        _foodFumesParticle.Stop();
+                    // Kompor MATI: Matikan semua efek
+                    ShowWarningWithDOTween(_warningOnStoveGas);
+                    if (_foodFumesParticle.isPlaying) _foodFumesParticle.Stop();
+                    AudioManager.Instance.StopSFX("MasakAudio");
+
+                    // TUNGGU sampai dinyalakan kembali
+                    yield return new WaitUntil(() => _isStoveOn);
                 }
 
-                // PENTING: Tunggu kompor nyala DI SINI, sebelum timer apa pun diproses
-                yield return new WaitUntil(() => _isStoveOn);
-                HideWarningWithDOTween();
+                // 2. JIKA SUDAH NYALA (Atau baru dinyalakan kembali)
+                HideWarningWithDOTween(_warningOnStoveGas);
 
-                // Kode di bawah ini HANYA akan dijalankan jika _isStoveOn == true
-                Debug.Log("Kompor menyala, proses masak dimulai/dilanjutkan!");
+                // Mainkan suara hanya jika belum bunyi (agar tidak pecah/berulang dari awal)
+                if (!AudioManager.Instance.IsPlaying("MasakAudio"))
+                {
+                    AudioManager.Instance.PlaySFX("MasakAudio");
+                }
 
-                if (!_cookingTimer._isRunning)
-                    _cookingTimer.StartTimer(999f);
+                if (!_foodFumesParticle.isPlaying) _foodFumesParticle.Play();
 
-                if (_foodFumesParticle != null && !_foodFumesParticle.isPlaying)
-                    _foodFumesParticle.Play();
+                // 3. PROSES TIMER
+                if (!_cookingTimer._isRunning) _cookingTimer.StartTimer(999f);
 
                 _elapsedCookingTime += Time.deltaTime;
                 _cookingTimer.UpdateTimer(Time.deltaTime);
                 _canvasManager.UpdateUITimer(_cookingTimer.GetTimeLeft());
 
-                yield return null; // Tunggu frame berikutnya
+                yield return null;
             }
 
-            // Pastikan partikel berhenti saat keluar dari loop (makanan diangkat)
+            // Keluar dari Loop (Makanan matang/diangkat)
             if (_foodFumesParticle != null) _foodFumesParticle.Stop();
+            AudioManager.Instance.StopSFX("MasakAudio");
         }
 
         public void ActionAngkatMakanan()
@@ -199,6 +232,13 @@ namespace CookOrPanic.CookingStation
             if (_foodFumesParticle != null) _foodFumesParticle.Stop();
             _cookingTimer.StopTimer();
             _tombolAngkat.gameObject.SetActive(false);
+            HideWarningWithDOTween(_warningOnStoveGas);
+
+            if (_isTutorialMode && TutorialManager.Instance != null)
+            {
+                TutorialManager.Instance.OnFoodLifted();
+            }
+            
 
             List<IXRSelectInteractable> selected = _oilSocket.interactablesSelected;
             if (selected.Count > 0)
@@ -270,8 +310,12 @@ namespace CookOrPanic.CookingStation
             int totalNeeded = 0;
             foreach (var req in recipe._requirements) totalNeeded += req._requiredAmount;
 
-            // Jika jumlah bahan belum pas, langsung false
-            if (_ingredientsInContainer.Count != totalNeeded) return false;
+            // DEBUG 1: Cek jumlah
+            if (_ingredientsInContainer.Count != totalNeeded)
+            {
+                Debug.Log($"<color=yellow>Gagal:</color> Jumlah bahan baru {_ingredientsInContainer.Count}/{totalNeeded}");
+                return false;
+            }
 
             foreach (var req in recipe._requirements)
             {
@@ -281,7 +325,13 @@ namespace CookOrPanic.CookingStation
                     if (input.type == req._ingredientType && input.state == req._requiredState)
                         matchCount++;
                 }
-                if (matchCount != req._requiredAmount) return false;
+
+                // DEBUG 2: Cek jenis bahan yang salah
+                if (matchCount != req._requiredAmount)
+                {
+                    Debug.Log($"<color=red>Gagal:</color> Bahan {req._ingredientType} kurang. Butuh {req._requiredAmount}, ada {matchCount}");
+                    return false;
+                }
             }
             return true;
         }
@@ -302,37 +352,29 @@ namespace CookOrPanic.CookingStation
         }
 
         //animasi
-        private void ShowWarningWithDOTween()
+        // Tambahkan parameter CanvasGroup pada fungsi yang sudah ada
+        private void ShowWarningWithDOTween(CanvasGroup targetCG)
         {
-            if (_warningCanvasGroup == null) return;
+            if (targetCG == null) return;
+            if (targetCG.gameObject.activeSelf) return;
 
-            // Jika sudah aktif, jangan panggil lagi agar tidak tumpang tindih
-            if (_warningCanvasGroup.gameObject.activeSelf) return;
+            targetCG.gameObject.SetActive(true);
+            targetCG.alpha = 0;
+            targetCG.DOKill();
 
-            _warningCanvasGroup.gameObject.SetActive(true);
-
-            // --- PERBAIKAN: JANGAN ubah localScale di sini ---
-            // Biarkan ukurannya sesuai dengan yang kamu atur di Inspector
-
-            _warningCanvasGroup.alpha = 0;
-
-            _warningCanvasGroup.DOKill();
-
-            // Animasi Alpha bergerak dari 0.2 ke 1 (Kedap-kedip)
-            // Ini jauh lebih aman untuk VR karena tidak merubah fisik objek
-            _warningCanvasGroup.DOFade(1f, 0.5f)
-                .From(0.2f) // Mulai dari agak transparan
+            targetCG.DOFade(1f, 0.5f)
+                .From(0.2f)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine);
         }
 
-        private void HideWarningWithDOTween()
+        private void HideWarningWithDOTween(CanvasGroup targetCG)
         {
-            if (_warningCanvasGroup == null || !_warningCanvasGroup.gameObject.activeSelf) return;
+            if (targetCG == null || !targetCG.gameObject.activeSelf) return;
 
-            _warningCanvasGroup.DOKill();
-            _warningCanvasGroup.DOFade(0f, 0.3f).OnComplete(() => {
-                _warningCanvasGroup.gameObject.SetActive(false);
+            targetCG.DOKill();
+            targetCG.DOFade(0f, 0.3f).OnComplete(() => {
+                targetCG.gameObject.SetActive(false);
             });
         }
 
@@ -344,6 +386,9 @@ namespace CookOrPanic.CookingStation
             ClearStation();
 
 
+            AudioManager.Instance.PlaySFX("AdonAudio");
+
+
             // 2. Munculkan Particle Efek Mengadon
             if (_mixingParticle != null)
             {
@@ -352,6 +397,10 @@ namespace CookOrPanic.CookingStation
 
             // 3. Tunggu selama beberapa detik (durasi mengaduk)
             yield return new WaitForSeconds(_mixingDuration);
+
+            // 2. Matikan Suara dan Particle
+            AudioManager.Instance.StopSFX("AdonAudio");
+            if (_mixingParticle != null) _mixingParticle.Stop();
 
             // 4. Matikan Particle (opsional, tergantung setting looping particle-mu)
             if (_mixingParticle != null)
@@ -365,6 +414,8 @@ namespace CookOrPanic.CookingStation
 
             Debug.Log("<color=green>CookingStation:</color> Selesai mengaduk, makanan muncul!");
         }
+
+
 
         public void ClearStation()
         {

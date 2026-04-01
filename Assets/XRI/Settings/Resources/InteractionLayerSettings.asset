@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LayerNames:
   - Default
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - 'Food '
+  - Plate
+  - Nampan
+  - SocketOnly
+  - Ikan
+  - Ignore Raycast
+  - Ayam
   - 
   - 
   - 
