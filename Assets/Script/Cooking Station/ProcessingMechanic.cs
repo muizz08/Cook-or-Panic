@@ -30,7 +30,12 @@ namespace CookOrPanic.ProcessingMechanic
         [SerializeField] private GameObject _cleanButtonCanvas;
         [SerializeField] private List<Transform> _plateRackSlots = new List<Transform>();
         [SerializeField] private Transform _wastafelSpawnPoint;
-        [SerializeField] private int _kapasitasWastafel = 1;
+
+        [Header("Dirty Plate")]
+        [SerializeField] private bool _isTutorialMode = false; // Centang ini khusus di scene tutorial
+        [SerializeField] private int _mainSceneCapacity = 6;  // Kapasitas untuk main scene
+        [SerializeField] private int _tutorialCapacity = 1;
+        private int _kapasitasWastafel;
 
         [Header("Audio References")]
         //[SerializeField] private AudioSource _grindingAudioSource; // Drag Audio Source Mesin Giling ke sini
@@ -41,15 +46,19 @@ namespace CookOrPanic.ProcessingMechanic
 
         private void Start()
         {
-            // Berlangganan event saat benda masuk socket
+            // Tentukan kapasitas berdasarkan mode
+            _kapasitasWastafel = _isTutorialMode ? _tutorialCapacity : _mainSceneCapacity;
+
+            // Reset static variables (PENTING: karena static tidak reset otomatis saat ganti scene)
+            _piringDiWastafel = 0;
+            _nextSlotIndex = 0;
+
             if (_socket != null)
             {
                 _socket.OnObjectEntered += HandleObjectEntered;
                 _socket.OnObjectRemoved += HandleObjectRemoved;
             }
-           
         }
-
         private void OnDestroy()
         {
             // Unsubscribe untuk keamanan memory
@@ -80,6 +89,8 @@ namespace CookOrPanic.ProcessingMechanic
             if (_isGrinding)
             {
                 StartCoroutine(GrindingProcess());
+
+            
             }
             else
             {
@@ -106,7 +117,7 @@ namespace CookOrPanic.ProcessingMechanic
                 if (_dagingMentah != null)
                 {
                     // Tunggu proses giling 2 detik
-                    yield return new WaitForSeconds(2.0f);
+                    yield return new WaitForSeconds(3.0f);
 
                     // Cek lagi setelah 2 detik, apakah daging masih ada dan mesin masih nyala
                     if (_isGrinding && _dagingMentah != null)
@@ -127,6 +138,12 @@ namespace CookOrPanic.ProcessingMechanic
 
             // Bunyikan suara mesin berhenti (Klak/Mati)
             AudioManager.Instance.PlaySFX("OffGrinding");
+
+            if (TutorialManager.TutorialManager.Instance != null)
+            {
+                TutorialManager.TutorialManager.Instance.OnGrinderTurnedOff();
+            }
+
         }
 
         private void ProcessDaging()
@@ -147,7 +164,11 @@ namespace CookOrPanic.ProcessingMechanic
 
                 // Trigger tutorial jika ada
                 if (TutorialManager.TutorialManager.Instance != null)
-                    TutorialManager.TutorialManager.Instance.OnGrinderButtonPressed();
+                {
+                    // Panggil fungsi ini untuk memberitahu tutorial bahwa hasil sudah keluar
+                    // dan sekarang saatnya memunculkan instruksi MATIKAN mesin.
+                    TutorialManager.TutorialManager.Instance.OnGrinderResultSpawned();
+                }
             }
         }
 
@@ -218,13 +239,17 @@ namespace CookOrPanic.ProcessingMechanic
             {
                 Debug.LogWarning("<color=yellow>Mechanic:</color> Tidak ada piring yang terdeteksi di nampan!");
             }
-            _piringDiWastafel++;
-            Debug.Log($"Piring di wastafel: {_piringDiWastafel} / {_kapasitasWastafel}");
+            _piringDiWastafel++; // Ini akan menambah counter
 
+            // Gunakan variabel kapasitas yang sudah ditentukan di Start()
             if (_piringDiWastafel >= _kapasitasWastafel)
             {
                 _cleanButtonCanvas.SetActive(true);
-                Debug.Log("<color=yellow>Wastafel Penuh!</color> Tombol cuci muncul.");
+                Debug.Log($"<color=yellow>Wastafel Penuh!</color> ({_piringDiWastafel}/{_kapasitasWastafel}) Tombol cuci muncul.");
+            }
+            else
+            {
+                Debug.Log($"Piring di wastafel: {_piringDiWastafel}/{_kapasitasWastafel}. Belum penuh.");
             }
         }
 

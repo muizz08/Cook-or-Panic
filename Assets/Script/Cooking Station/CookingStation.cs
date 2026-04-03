@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.UI;
@@ -35,17 +35,31 @@ namespace CookOrPanic.CookingStation
         [Header("Station Socket Controllers")]
         [SerializeField] private SocketController _adonanSocket;
         [SerializeField] private SocketController _oilSocket;    
-        [SerializeField] private SocketController _drainSocket;  
-       
+        [SerializeField] private SocketController _drainSocket;
+
         [Header("Script References")]
         [SerializeField] private Timer _cookingTimer;
         [SerializeField] private CanvasManager _canvasManager;
+        [SerializeField] private HeadChef _headChef; 
+
         private float _elapsedCookingTime;
         private bool _isStoveOn = false;
 
-        [Header("Audio Sources (Sudah diisi Clip di Inspector)")]
-        
+        // Tambahkan di bagian Header References
+        [Header("UI Checklist & Feedback")]
+        [SerializeField] private GameObject _checklistPrefab;
+        [SerializeField] private Transform _checklistParent;
+        [SerializeField] private ScrollRect _checklistScrollRect;
+        [SerializeField] private CanvasGroup _wrongIngredientPopup; // Popup "Bahan Salah"
 
+        [Header("Feedback Visual")]
+        [SerializeField] private Heart.Heart _heartEffect; // Drag & drop objek Heart di Inspector
+
+        [Header("Panic Settings")]
+        [SerializeField] private float _panicThreshold = 0.8f; // 0.8 berarti 80% emosi
+        private bool _isPanicActive = false;
+
+        private Dictionary<Ingredient.IngredientType, GameObject> _activeChecklistUI = new Dictionary<Ingredient.IngredientType, GameObject>();
 
         private List<IngredientData> _ingredientsInContainer = new List<IngredientData>();
 
@@ -90,38 +104,192 @@ namespace CookOrPanic.CookingStation
                 _oilSocket.OnFoodEntered += OnFoodPlacedInOil;
             }
         }
+        private void Update()
+        {
+            CheckChefEmotionPanic();
+        }
 
         // --- LOGIKA ADUK BAHAN ---
         // --- LOGIKA ADUK BAHAN ---
         private void OnIngredientEntered(ProcessedIngredient ingredient)
         {
-            // 1. TAMBAHKAN KE LIST DULU (PENTING!)
-            _ingredientsInContainer.Add(new IngredientData
-            {
-                type = ingredient.GetIngredientType(),
-                state = ingredient.GetState()
-            });
+            Ingredient.IngredientType incomingType = ingredient.GetIngredientType();
+            FoodState incomingState = ingredient.GetState();
 
-            // 2. BARU CEK APAKAH SUDAH LENGKAP
-            if (_isTutorialMode)
+            string displayName = "";
+            bool isIngredientValid = false;
+
+            // 1. VALIDASI KETAT: Cek apakah bahan ini ada di resep yang tersedia
+            foreach (Recipe recipe in _availableRecipe)
             {
-                if (ValidateInternal(_tutorialRecipe))
+                foreach (var req in recipe._requirements)
                 {
-                    _tombolAduk.gameObject.SetActive(true);
-                    _tombolAduk.transform.localScale = Vector3.zero;
-                    _tombolAduk.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
-                    Debug.Log("<color=cyan>Tutorial:</color> Bahan lengkap, tombol muncul!");
+                    // Cek apakah Tipe dan State sesuai dengan kebutuhan resep
+                    if (req._ingredientType == incomingType && req._requiredState == incomingState)
+                    {
+                        // TAMBAHAN: Cek apakah bahan ini sudah dimasukkan melebihi jumlah yang dibutuhkan?
+                        // Ini opsional, tapi bagus agar player tidak memasukkan 10 garam jika butuh 1.
+                        int currentCount = 0;
+                        foreach (var input in _ingredientsInContainer)
+                        {
+                            if (input.type == incomingType) currentCount++;
+                        }
+
+                        if (currentCount < req._requiredAmount)
+                        {
+                            isIngredientValid = true;
+                            displayName = req._ingredientName;
+                            break;
+                        }
+                    }
                 }
+                if (isIngredientValid) break;
+            }
+
+            // 2. EKSEKUSI
+            if (isIngredientValid)
+            {
+                // Jika valid, baru masukkan ke list dan proses visual
+                HandleCorrectIngredient(ingredient, displayName);
             }
             else
             {
+                // Jika salah (tidak ada di resep atau jumlah berlebih), 
+                // langsung destroy dan munculkan popup tanpa masuk ke _ingredientsInContainer
+                HandleWrongIngredient(ingredient);
+            }
+        }   
+
+        private void HandleCorrectIngredient(ProcessedIngredient ingredient, string nameToDisplay)
+        {
+            var type = ingredient.GetIngredientType();
+
+            _ingredientsInContainer.Add(new IngredientData
+            {
+                type = type,
+                state = ingredient.GetState()
+            });
+
+            if (!_activeChecklistUI.ContainsKey(type))
+            {
+                GameObject newChecklist = Instantiate(_checklistPrefab, _checklistParent);
+
+                // 1. Set text dulu
+                var textMesh = newChecklist.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (textMesh != null) textMesh.text = nameToDisplay;
+
+                // 2. Reset Scale ke 0 sebelum aktif agar tidak "flash" ukuran penuh
+                newChecklist.transform.localScale = Vector3.zero;
+
+                // 3. PAKSA Layout Group menghitung posisi detik ini juga
+                // Gunakan LayoutRebuilder pada parent-nya
+                Canvas.ForceUpdateCanvases();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_checklistParent.GetComponent<RectTransform>());
+
+                // 4. Baru jalankan animasi DOTween
+                newChecklist.transform.DOKill();
+                newChecklist.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+
+                _activeChecklistUI.Add(type, newChecklist);
+            }
+
+            // Animasi tombol aduk juga sebaiknya pakai DOKill agar tidak tumpang tindih
+            if (!_isTutorialMode && _ingredientsInContainer.Count >= 1)
+            {
                 _tombolAduk.gameObject.SetActive(true);
+                _tombolAduk.transform.DOKill();
                 _tombolAduk.transform.localScale = Vector3.zero;
                 _tombolAduk.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
             }
 
             UpdateVisualIngredient();
+            if (ingredient.TryGetComponent(out CookOrPanic.ReturnToSender.ReturnToSender returnScript))
+            {
+                // Jika ada, panggil fungsi teleport-nya, jangan di-Destroy
+                returnScript.ReturnToInitialTransform();
+                Debug.Log($"<color=cyan>Teleporting {ingredient.name} back to table.</color>");
+            }
+            else
+            {
+                // Jika bukan penyedap (tidak punya script ReturnToSender), baru di-Destroy
+                Destroy(ingredient.gameObject);
+            }
+        }
+
+        private void HandleWrongIngredient(ProcessedIngredient ingredient)
+        {
+            Debug.Log("<color=red>Bahan Salah! Emosi Chef Meningkat!</color>");
+
+            StartCoroutine(TriggerHeartEffect(2f));
+
+            if (_headChef != null)
+            {
+                _headChef.TambahEmosi(0.2f);
+            }
+
+            // ANIMASI POPUP SALAH
+            if (_wrongIngredientPopup != null)
+            {
+                _wrongIngredientPopup.gameObject.SetActive(true);
+                _wrongIngredientPopup.DOKill();
+                _wrongIngredientPopup.alpha = 0;
+                _wrongIngredientPopup.transform.localScale = Vector3.one * 0.7f;
+
+                Sequence s = DOTween.Sequence();
+                s.Append(_wrongIngredientPopup.DOFade(1f, 0.2f));
+                s.Join(_wrongIngredientPopup.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack));
+                s.AppendInterval(1.5f); // Tahan sebentar
+                s.Append(_wrongIngredientPopup.DOFade(0f, 0.3f));
+                s.OnComplete(() => _wrongIngredientPopup.gameObject.SetActive(false));
+            }
+
+            AudioManager.Instance.PlaySFX("ChefAngry"); // Pastikan ada Sound ini
             Destroy(ingredient.gameObject);
+        }
+
+        private void CheckChefEmotionPanic()
+        {
+            if (_headChef == null || _heartEffect == null) return;
+
+            // Ambil nilai emosi dari HeadChef
+            float currentEmosi = _headChef.GetIsiEmosi();
+
+            if (currentEmosi >= _panicThreshold)
+            {
+                // Jika sudah masuk zona panik dan efek belum aktif, aktifkan
+                if (!_isPanicActive)
+                {
+                    _isPanicActive = true;
+                    _heartEffect.gameObject.SetActive(true);
+                    Debug.Log("<color=orange>Chef hampir meledak! Efek jantung aktif terus.</color>");
+                }
+            }
+            else
+            {
+                // Jika emosi turun di bawah threshold (misal ada mekanik pendingin), matikan
+                if (_isPanicActive)
+                {
+                    _isPanicActive = false;
+                    _heartEffect.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        // Modifikasi Coroutine lama agar tidak mematikan jantung jika sedang panik
+        private IEnumerator TriggerHeartEffect(float duration)
+        {
+            if (_heartEffect != null)
+            {
+                _heartEffect.gameObject.SetActive(true);
+
+                yield return new WaitForSeconds(duration);
+
+                // HANYA matikan jika emosi Chef masih di bawah batas panik
+                if (_headChef != null && _headChef.GetIsiEmosi() < _panicThreshold)
+                {
+                    _heartEffect.gameObject.SetActive(false);
+                }
+            }
         }
 
         public void TryCook()
@@ -176,7 +344,12 @@ namespace CookOrPanic.CookingStation
         {
             if (foodScript._foodState == FoodState.Raw)
             {
-                Debug.Log("Makanan masuk, menjalankan CookingRoutine...");
+                _elapsedCookingTime = foodScript._timeSpentCooking;
+
+                // 2. Langsung update UI agar tidak menampilkan angka 0 atau angka bekas masakan sebelumnya
+                _canvasManager.UpdateUITimer(_elapsedCookingTime);
+
+                Debug.Log($"Makanan masuk kembali. Melanjutkan dari: {_elapsedCookingTime} detik");
                 StartCoroutine(CookingRoutine(foodObject, foodScript));
             }
         }
@@ -227,49 +400,45 @@ namespace CookOrPanic.CookingStation
 
         public void ActionAngkatMakanan()
         {
-            StopAllCoroutines();
-          
-            if (_foodFumesParticle != null) _foodFumesParticle.Stop();
-            _cookingTimer.StopTimer();
-            _tombolAngkat.gameObject.SetActive(false);
-            HideWarningWithDOTween(_warningOnStoveGas);
-
-            if (_isTutorialMode && TutorialManager.Instance != null)
-            {
-                TutorialManager.Instance.OnFoodLifted();
-            }
-            
-
+            // 1. Ambil referensi makanan yang ada di socket saat ini
             List<IXRSelectInteractable> selected = _oilSocket.interactablesSelected;
+
             if (selected.Count > 0)
             {
                 IXRSelectInteractable foodInteractable = selected[0];
-                Renderer[] renderers = foodInteractable.transform.GetComponentsInChildren<Renderer>();
-                foreach (Renderer r in renderers) r.enabled = true;
 
                 if (foodInteractable.transform.TryGetComponent(out Food foodScript))
                 {
-                    // 2. KIRIM DURASI KE FOOD
+                    // 2. SIMPAN WAKTU: Masukkan waktu yang sudah berjalan ke dalam script Food
                     foodScript._timeSpentCooking = _elapsedCookingTime;
 
-                    // 3. PERINTAHKAN FOOD UNTUK MENENTUKAN STATUSNYA SENDIRI
+                    // 3. UPDATE STATUS: Beri tahu food untuk update visualnya
                     foodScript.UpdateStateBasedOnTime(_elapsedCookingTime);
 
-                    Debug.Log($"[CookingStation] Makanan diangkat. Waktu: {_elapsedCookingTime}s");
+                    // 4. PAKSA UI tetap menampilkan waktu terakhir (agar tidak kedip jadi 0)
+                    _canvasManager.UpdateUITimer(_elapsedCookingTime);
+
+                    Debug.Log($"[Angkat] Waktu tersimpan di {foodScript.name}: {foodScript._timeSpentCooking}s");
                 }
 
-                // --- BAGIAN YANG DIUBAH ---
-                // Kita gunakan _oilSocket.interactionManager untuk mengeluarkan benda
-                // Tapi parameternya harus berupa XRSocketInteractor asli, yaitu _oilSocket.Socket
+                // 5. Keluarkan dari socket
                 _oilSocket.interactionManager.SelectExit(_oilSocket.Socket, foodInteractable);
 
                 if (_drainSocket != null)
                 {
-                    // Masukkan ke socket penirisan (drain) menggunakan Socket aslinya
                     _drainSocket.interactionManager.SelectEnter(_drainSocket.Socket, foodInteractable);
                 }
-
             }
+
+            // 6. MATIKAN EFEK & TIMER (Setelah data aman disimpan)
+            StopAllCoroutines();
+            if (_foodFumesParticle != null) _foodFumesParticle.Stop();
+            _cookingTimer.StopTimer(); // Pastikan StopTimer di script Timer-mu tidak memaksa UI ke 0
+            _tombolAngkat.gameObject.SetActive(false);
+            HideWarningWithDOTween(_warningOnStoveGas);
+
+            // JANGAN RESET _elapsedCookingTime = 0 di sini! 
+            // Biarkan dia menyimpan angka terakhir sampai ada makanan baru yang masuk.
         }
 
         // --- UTILITIES ---
@@ -381,7 +550,7 @@ namespace CookOrPanic.CookingStation
         private IEnumerator MixingProcessRoutine(Recipe recipe)
         {
             float _mixingDuration = 2.0f;
-            // 1. Matikan tombol aduk agar tidak diklik dua kali
+            // 1. Matikan tombol aduk agar tidak diklik dua kali    
             if (_tombolAduk != null) _tombolAduk.gameObject.SetActive(false);
             ClearStation();
 
@@ -418,16 +587,23 @@ namespace CookOrPanic.CookingStation
 
 
         public void ClearStation()
-        {
-            _ingredientsInContainer.Clear();
+{
+    _ingredientsInContainer.Clear();
 
-            // Hapus semua gundukan SEBELUM melakukan hal lain
-            foreach (Transform child in _gundukanSpawnPoint)
-            {
-                Destroy(child.gameObject);
-            }
+    // Hapus semua UI Checklist
+    foreach (var ui in _activeChecklistUI.Values)
+    {
+        Destroy(ui);
+    }
+    _activeChecklistUI.Clear();
 
-            _tombolAduk.gameObject.SetActive(false);
-        }
+    // Hapus visual gundukan
+    foreach (Transform child in _gundukanSpawnPoint)
+    {
+        Destroy(child.gameObject);
+    }
+
+    _tombolAduk.gameObject.SetActive(false);
+}
     }
 }

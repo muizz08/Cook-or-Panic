@@ -11,7 +11,8 @@ namespace CookOrPanic.TutorialManager
     using CookOrPanic.Panel;
     using CookOrPanic.ProcessedIngredient;
     using CookOrPanic.SocketController;
-    using CookOrPanic.AudioManager;
+    using CookOrPanic.ReturnToSender;
+ 
 
     [Serializable]
     public class IngredientUI
@@ -26,7 +27,7 @@ namespace CookOrPanic.TutorialManager
     {
         public static TutorialManager Instance;
 
-        public enum TutorialStep { Panduan, Resep, AmbilBahan,NyalakanKompor, MasakMakanan, MatikanKompor, AmbilPiring, HidangkanMakanan, SimpanKenampan, SajikanMakanan, TekanBel, SimpanNampanBalik, AmbilIkan, Penggilingan, CuciPiring}
+        public enum TutorialStep { Panduan, Resep, AmbilBahan,NyalakanKompor, MasakMakanan, MatikanKompor, AmbilPiring, HidangkanMakanan, SimpanKenampan, SajikanMakanan, TekanBel, SimpanNampanBalik, AmbilIkan, Penggilingan, MatikanPenggiling, CuciPiring}
          
 
         [Header("Current Progress")]
@@ -58,6 +59,7 @@ namespace CookOrPanic.TutorialManager
         [SerializeField] private GameObject _instruksiAmbilIkan;
         [SerializeField] private GameObject _instruksiPenggilingan;
         [SerializeField] private GameObject _instruksiTekanTombolGiling;
+        [SerializeField] private GameObject _instruksiMatikanPenggiling;
         [SerializeField] private GameObject _instruksiCuciPiring;
         [SerializeField] private GameObject _panelSelesaiFinal;
        
@@ -86,7 +88,6 @@ namespace CookOrPanic.TutorialManager
         private void Start()
         {
 
-            AudioManager.Instance.PlaySFX("BGM"); // Pastikan nama suara sesuai dengan yang ada di AudioManager kamu
             // Panggil UpdateStepUI di awal agar tampilan sinkron dengan step 'Panduan'
             UpdateStepUI();
             if (_foodSocket != null)
@@ -500,8 +501,19 @@ namespace CookOrPanic.TutorialManager
                 if (_instruksiTekanTombolGiling != null)
                 {
                     _instruksiTekanTombolGiling.SetActive(true);
-                    _instruksiTekanTombolGiling.transform.localScale = Vector3.zero;
-                    _instruksiTekanTombolGiling.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+                    CanvasGroup targetCG = _instruksiTekanTombolGiling.GetComponent<CanvasGroup>();
+                    if (targetCG == null) targetCG = _instruksiTekanTombolGiling.AddComponent<CanvasGroup>();
+
+                    // Berhentikan animasi sebelumnya agar tidak bertumpuk (Stacking)
+                    targetCG.DOKill();
+
+                    // Jalankan animasi kedip (Yoyo)
+                    targetCG.DOFade(1f, 0.5f)
+                        .From(0.2f)
+                        .SetLoops(-1, LoopType.Yoyo)
+                        .SetEase(Ease.InOutSine);
+
+
                 }
 
                 Debug.Log("<color=cyan>Tutorial:</color> Ikan di penggilingan, instruksi tombol muncul.");
@@ -510,33 +522,48 @@ namespace CookOrPanic.TutorialManager
 
         public void OnGrinderButtonPressed()
         {
+            // Step ini dipanggil saat pemain menekan tombol NYALAKAN
             if (currentStep == TutorialStep.Penggilingan)
             {
-                // Hilangkan instruksi tekan tombol
                 if (_instruksiTekanTombolGiling != null)
                 {
-                    _instruksiTekanTombolGiling.transform.DOScale(Vector3.zero, 0.3f)
-                        .OnComplete(() => _instruksiTekanTombolGiling.SetActive(false));
+                    _instruksiTekanTombolGiling.transform.DOKill(true);
+                    _instruksiTekanTombolGiling.SetActive(false);
                 }
-                currentStep = TutorialStep.CuciPiring;
 
-                UpdateStepUI();
-                // Lanjut ke step berikutnya jika ada, atau tutorial selesai
-                Debug.Log("<color=green>Tutorial:</color> Proses penggilingan dimulai!");
+                // JANGAN pindah step di sini jika ingin menunggu prefab muncul dulu
+                // Atau biarkan saja jika kamu ingin instruksi "Tunggu Proses" muncul
             }
         }
+
+        // Tambahkan fungsi baru untuk dipanggil saat prefab muncul
+        public void OnGrinderResultSpawned()
+        {
+            if (currentStep == TutorialStep.Penggilingan)
+            {
+                currentStep = TutorialStep.MatikanPenggiling;
+                UpdateStepUI();
+                Debug.Log("<color=cyan>Tutorial:</color> Prefab muncul! Instruksi MATIKAN diaktifkan.");
+            }
+        }
+        public void OnGrinderTurnedOff()
+        {
+            if (currentStep == TutorialStep.MatikanPenggiling)
+            {
+                // Pindah ke step cuci piring setelah mesin mati
+                currentStep = TutorialStep.CuciPiring;
+                UpdateStepUI();
+                Debug.Log("<color=green>Tutorial:</color> Mesin mati! Sekarang waktunya cuci piring.");
+            }
+        }
+
 
         // Panggil fungsi ini melalui event/script saat piring selesai dicuci
         public void OnDishWashed()
         {
             if (currentStep == TutorialStep.CuciPiring)
             {
-                // 1. Matikan instruksi cuci piring
-                if (_instruksiCuciPiring != null)
-                {
-                    _instruksiCuciPiring.transform.DOScale(Vector3.zero, 0.3f)
-                        .OnComplete(() => _instruksiCuciPiring.SetActive(false));
-                }
+                HideUI(_instruksiCuciPiring);
 
                 // 2. Aktifkan Panel Selesai Final
                 if (_panelSelesaiFinal != null)
@@ -690,10 +717,26 @@ namespace CookOrPanic.TutorialManager
                     }
                     break;
 
+                case TutorialStep.MatikanPenggiling:
+                    _instruksiMatikanPenggiling.SetActive(true);
+                    // Ambil atau tambahkan CanvasGroup secara otomatis
+                    CanvasGroup target = _instruksiMatikanPenggiling.GetComponent<CanvasGroup>();
+                    if (target == null) target = _instruksiMatikanPenggiling.AddComponent<CanvasGroup>();
+
+                    // Berhentikan animasi sebelumnya agar tidak bertumpuk (Stacking)
+                    target.DOKill();
+
+                    // Jalankan animasi kedip (Yoyo)
+                    target.DOFade(1f, 0.5f)
+                        .From(0.2f)
+                        .SetLoops(-1, LoopType.Yoyo)
+                        .SetEase(Ease.InOutSine);
+                    break;
+
                 case TutorialStep.CuciPiring:
                     // Matikan instruksi penggilingan jika masih ada
-                   HideUI(_instruksiPenggilingan);
-
+                    HideUI(_instruksiPenggilingan);
+                    HideUI(_instruksiMatikanPenggiling);
                     // Nyalakan instruksi cuci piring
                     if (_instruksiCuciPiring != null)
                     {

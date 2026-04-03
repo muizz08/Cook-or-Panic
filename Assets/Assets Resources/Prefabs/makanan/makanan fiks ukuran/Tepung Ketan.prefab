@@ -179,8 +179,9 @@ GameObject:
   - component: {fileID: 501668363406392951}
   - component: {fileID: 8572996598949120434}
   - component: {fileID: 1799697582264928772}
+  - component: {fileID: 2512808275051776334}
   m_Layer: 0
-  m_Name: Tepung Beras
+  m_Name: Tepung Ketan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -194,7 +195,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8424488047123387912}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0039604288, y: 0.013297712, z: -0.28540996, w: 0.9583052}
+  m_LocalRotation: {x: -0.0035794028, y: 0.013405296, z: -0.25795117, w: 0.9660583}
   m_LocalPosition: {x: -9.3107, y: 0.3460985, z: 5.1520844}
   m_LocalScale: {x: 0.18190302, y: 0.18190302, z: 0.18190302}
   m_ConstrainProportionsScale: 0
@@ -202,7 +203,7 @@ Transform:
   - {fileID: 5029149611400664506}
   - {fileID: 1157620884140556243}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 1.59, z: -33.17}
+  m_LocalEulerAnglesHint: {x: 0, y: 1.59, z: -29.9}
 --- !u!65 &501668363406392951
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -222,8 +223,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.38090882, y: 0.37950656, z: 0.47301412}
-  m_Center: {x: 0.002996661, y: 0.31024513, z: 0.004437118}
+  m_Size: {x: 0.42993525, y: 0.49681354, z: 0.47301412}
+  m_Center: {x: -0.021517146, y: 0.3688985, z: 0.0044371183}
 --- !u!54 &8572996598949120434
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -399,3 +400,17 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &2512808275051776334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8424488047123387912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61b43b054caa975499318d28ded87d27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ingredientType: 20
+  _currentState: 0

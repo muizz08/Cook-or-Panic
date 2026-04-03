@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4874126678125670354, guid: 34ddfc476c2fad145b71467f525f9418, type: 3}
+  - {fileID: 2100000, guid: 0b86d8b77c9793f4896e33de55ec2ce4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -138,6 +138,8 @@ MonoBehaviour:
   _foodType: 0
   _foodState: 0
   _recipeOrigin: {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}
+  _cookedMaterial: {fileID: 4874126678125670354, guid: 34ddfc476c2fad145b71467f525f9418, type: 3}
+  _overCookedMaterial: {fileID: 2100000, guid: 072992ea587fb654185f5649885d975f, type: 2}
 --- !u!65 &743633108282111885
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -395,7 +397,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4874126678125670354, guid: 34ddfc476c2fad145b71467f525f9418, type: 3}
+  - {fileID: 2100000, guid: 0b86d8b77c9793f4896e33de55ec2ce4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -478,7 +480,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4874126678125670354, guid: 34ddfc476c2fad145b71467f525f9418, type: 3}
+  - {fileID: 2100000, guid: 0b86d8b77c9793f4896e33de55ec2ce4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -561,7 +563,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4874126678125670354, guid: 34ddfc476c2fad145b71467f525f9418, type: 3}
+  - {fileID: 2100000, guid: 0b86d8b77c9793f4896e33de55ec2ce4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

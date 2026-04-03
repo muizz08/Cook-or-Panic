@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 namespace CookOrPanic.Panel
 {
     using CookOrPanic.TutorialManager;
+    using CookOrPanic.AudioManager;
+
     public class Panel : MonoBehaviour
     {
         public enum PanelType
@@ -24,10 +25,13 @@ namespace CookOrPanic.Panel
         public PanelType _panelType;
         public Image _panelImage;
 
-       
+        [Header("Navigation Settings")]
+        public RectTransform _contentRect;
+        public int _maxPages = 3;
+        private int _currentPage = 0;
+
         public void Start()
         {
-
             if (_panelType == PanelType.PanelNavigation)
             {
                 NavAnimation();
@@ -36,15 +40,24 @@ namespace CookOrPanic.Panel
 
         public void ToggleWithPartner(Panel partnerPanel)
         {
-            if (partnerPanel == null) return;
+            // PROTEKSI: Jika lupa narik referensi di Inspector, script tidak akan error/crash
+            if (partnerPanel == null)
+            {
+                Debug.LogWarning($"Partner Panel belum diisi di Inspector objek: {gameObject.name}");
+                return;
+            }
+            if (_panelImage == null)
+            {
+                Debug.LogWarning($"_panelImage belum diisi di Inspector objek: {gameObject.name}");
+                return;
+            }
 
-            // Jika saya sedang AKTIF, maka saya harus MATI dan pasangan harus NYALA
-            if (this._panelImage.gameObject.activeSelf)
+            // Cek status aktif image
+            if (_panelImage.gameObject.activeSelf)
             {
                 this.HidePanel();
                 partnerPanel.ShowPanel();
             }
-            // Jika saya sedang MATI, maka saya harus NYALA dan pasangan harus MATI
             else
             {
                 this.ShowPanel();
@@ -54,87 +67,88 @@ namespace CookOrPanic.Panel
 
         public void ShowPanel()
         {
+            if (_panelImage == null) return;
+
             _panelImage.gameObject.SetActive(true);
+            Canvas.ForceUpdateCanvases();
 
-            // LOGIKA TUTORIAL BERURUTAN
+            // SFX: Buka Buku
+            AudioManager.Instance?.PlaySFX("BookAudio");
+
+            // Logika Tutorial
             if (_panelType == PanelType.PanelPanduan)
-            {
-                // Beritahu manager bahwa Panduan sudah dibuka
                 TutorialManager.Instance?.OnBookOpened(PanelType.PanelPanduan);
-
-              
-            }
             else if (_panelType == PanelType.PanelResep)
-            {
-                // Beritahu manager bahwa Resep sudah dibuka
                 TutorialManager.Instance?.OnBookOpened(PanelType.PanelResep);
 
-            }
-
-            // --- Animasi DOTween (Tetap sama) ---
+            // Animasi DOTween
+            _panelImage.rectTransform.DOKill();
             _panelImage.rectTransform.localScale = Vector3.zero;
             _panelImage.rectTransform.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
-            _panelImage.DOFade(1f, 0.3f);
         }
 
         public void HidePanel()
         {
-            _panelImage.DOKill();
+            if (_panelImage == null) return;
+
             _panelImage.rectTransform.DOKill();
 
             Sequence seq = DOTween.Sequence();
-
-            seq.Append(
-                _panelImage.rectTransform
-                    .DOScale(1.1f, 0.15f)
-                    .SetEase(Ease.OutQuad)
-            );
-
-            seq.Append(
-                _panelImage.rectTransform
-                    .DOScale(0f, 0.2f)
-                    .SetEase(Ease.InBack)
-            );
-
-            seq.Join(
-                _panelImage
-                    .DOFade(0f, 0.25f)
-            );
-
+            seq.Append(_panelImage.rectTransform.DOScale(1.1f, 0.15f).SetEase(Ease.OutQuad));
+            seq.Append(_panelImage.rectTransform.DOScale(0f, 0.2f).SetEase(Ease.InBack));
             seq.OnComplete(() =>
             {
                 _panelImage.gameObject.SetActive(false);
             });
-
         }
-        
+
+        public void NextPage()
+        {
+            if (_currentPage < _maxPages - 1)
+            {
+                _currentPage++;
+                AudioManager.Instance?.PlaySFX("BookAudio"); // SFX Ganti Halaman
+                UpdatePanelPosition();
+            }
+        }
+
+        public void PreviousPage()
+        {
+            if (_currentPage > 0)
+            {
+                _currentPage--;
+                AudioManager.Instance?.PlaySFX("BookAudio"); // SFX Ganti Halaman
+                UpdatePanelPosition();
+            }
+        }
+
+        private void UpdatePanelPosition()
+        {
+            if (_contentRect == null) return;
+
+            Canvas.ForceUpdateCanvases();
+            float _pageWidth = 2.57f;
+            float targetX = -(_currentPage * _pageWidth);
+
+            _contentRect.DOKill();
+            _contentRect.DOAnchorPosX(targetX, 0.5f).SetEase(Ease.OutQuad);
+        }
 
         private void NavAnimation()
         {
+            if (_panelImage == null) return;
             _panelImage.gameObject.SetActive(true);
-
-            _panelImage.DOKill();
             _panelImage.rectTransform.DOKill();
-
             _panelImage.rectTransform.localScale = Vector3.one;
-
-            // Loop zoom in - zoom out terus
-            _panelImage.rectTransform
-                .DOScale(1.1f, 0.8f)
-                .SetEase(Ease.InOutSine)
-                .SetLoops(-1, LoopType.Yoyo);
+            _panelImage.rectTransform.DOScale(1.1f, 0.8f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
         }
 
-        // Tambahkan ini di dalam class Panel : MonoBehaviour
         private void OnTriggerEnter(Collider other)
         {
-            // Jika objek ini adalah tipe PanelTriggerLanjut dan diinjak Player
             if (_panelType == PanelType.PanelTriggerLanjut && other.CompareTag("Player"))
             {
-                ShowPanel(); // Menjalankan animasi DOTween yang sudah ada
+                ShowPanel();
             }
         }
     }
-
-
 }

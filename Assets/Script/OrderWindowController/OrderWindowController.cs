@@ -8,11 +8,11 @@ namespace CookOrPanic.OrderWindowController
 
     using System.Collections.Generic;
     using CookOrPanic.CanvasManager;
-    using CookOrPanic.Food;
     using CookOrPanic.Plate;
     using CookOrPanic.ProcessingMechanic;
     using CookOrPanic.Score;
     using CookOrPanic.SocketController;
+    using CookOrPanic.TutorialManager;
 
     public class OrderWindowController : MonoBehaviour
     {
@@ -214,12 +214,18 @@ namespace CookOrPanic.OrderWindowController
                 trayObject.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
 
                 yield return new WaitForSeconds(1.5f);
-
+                    
                 trayObject.SetActive(true);
 
                 if (trayRb != null)
                 {
                     trayRb.isKinematic = false; // Aktifkan lagi agar bisa diambil pemain
+                }
+
+                if (TutorialManager.Instance != null)
+                {
+                    // Kita panggil fungsi yang memicu step "SimpanNampanBalik"
+                    TutorialManager.Instance.OnBellPressedDuringTutorial();
                 }
 
                 Debug.Log("<color=green>Loop:</color> Nampan kembali ke Window Socket!");

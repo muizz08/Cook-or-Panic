@@ -24,7 +24,9 @@ namespace CookOrPanic.Ingredient
         KacangHijau,
         TepungRoti,
         TepungBeras,
-        Wortel
+        Wortel,
+        Wijen,
+        TepungKetan
 
     }
     public class Ingredient : MonoBehaviour

@@ -16,7 +16,7 @@ namespace CookOrPanic.Timer
         public void StartTimer(float duration)
         {
             _maxTime = duration;
-            _currentTime = 0;
+            //_currentTime = 0;
             _isRunning = true;
             Debug.Log($"Timer started! MaxTime: {_maxTime}, CurrentTime: {_currentTime}");
         }
@@ -44,7 +44,7 @@ namespace CookOrPanic.Timer
 
         public void StopTimer()
         {
-            _currentTime = 0;
+            //_currentTime = 0;
             _maxTime = 0;
             _isRunning = false;
         }
