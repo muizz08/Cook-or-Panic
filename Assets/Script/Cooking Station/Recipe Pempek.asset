@@ -14,14 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultFoodType: 1
   _requirements:
-  - _ingredientType: 2
+  - _ingredientName: Terigu
+    _ingredientType: 5
     _requiredState: 0
-    _requiredAmount: 0
-  - _ingredientType: 0
+    _requiredAmount: 1
+  - _ingredientName: Tepung Beras
+    _ingredientType: 17
     _requiredState: 0
-    _requiredAmount: 0
-  - _ingredientType: 0
+    _requiredAmount: 1
+  - _ingredientName: Bawang Putih
+    _ingredientType: 8
     _requiredState: 0
-    _requiredAmount: 0
-  _resultPrefabs: []
-  _cookedScore: 0
+    _requiredAmount: 3
+  - _ingredientName: Ayam Giling
+    _ingredientType: 1
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Penyedap Rasa
+    _ingredientType: 11
+    _requiredState: 0
+    _requiredAmount: 1
+  _resultPrefabs:
+  - {fileID: 6335914867865313297, guid: c7f6c4f92f6538943bb52d4ee04d5a7d, type: 3}
+  _cookedScore: 12

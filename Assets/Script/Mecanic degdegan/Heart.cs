@@ -16,14 +16,10 @@ namespace CookOrPanic.Heart
         [Range(0f, 1f)] public float minAlpha = 0.25f;
         [Range(0f, 1f)] public float maxAlpha = 0.9f;
 
-
-
         [Header("Timing")]
         public float beatIn = 0.08f;    // naik cepat
         public float beatOut = 0.12f;   // turun lembut
         public float restTime = 0.35f;  // jeda napas
-
-
 
         Sequence heartbeat;
 
@@ -37,6 +33,7 @@ namespace CookOrPanic.Heart
             Play();
         }
 
+    
         void Play()
         {
             heartbeat?.Kill();
@@ -54,9 +51,9 @@ namespace CookOrPanic.Heart
             heartbeat.AppendInterval(restTime);
 
 
-
             heartbeat.SetLoops(-1);
             heartbeat.SetUpdate(true); // penting untuk UI / VR
+   
         }
 
         void OnDisable()

@@ -12,7 +12,8 @@ namespace CookOrPanic.Food
     public enum FoodType
     {
         Onde,
-        Pempek
+        Pempek, 
+        Kroket
     }
     public class Food : MonoBehaviour
     {

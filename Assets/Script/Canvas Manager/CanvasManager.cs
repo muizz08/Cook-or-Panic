@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -10,6 +10,8 @@ namespace CookOrPanic.CanvasManager
 
     using CookOrPanic.Food; // Pastikan namespace Food tersedia
     using CookOrPanic.Timer;
+    using CookOrPanic.UIAnimator;
+    using CookOrPanic.TutorialManager;
 
     public class CanvasManager : MonoBehaviour
     {
@@ -17,10 +19,15 @@ namespace CookOrPanic.CanvasManager
         [SerializeField] public Image _scoreDisplayImage; // Komponen Image pada UI yang akan menampilkan gambar angka
         [SerializeField] public Sprite[] _scoreSprites;   // Masukkan sprite angka 6-20 di sini (Index 0 = angka 6)
 
+        [Header("UI Masak")]
         [SerializeField]private TMP_Text _timerText;
         [SerializeField]private Slider _angerBar;
-        //private Panel _panel;
-        [SerializeField]private Timer _timer;
+        [SerializeField]private Timer _timerCooking;
+
+        [Header("Book Timer UI")]
+        [SerializeField] private GameObject _bookTimerPanel;
+        [SerializeField] private TMP_Text _TimerBook;
+
 
         [Header("Food Notification Settings")]
         [SerializeField] private Image _foodIconDisplay; // Image UI tempat gambar notif muncul
@@ -37,9 +44,15 @@ namespace CookOrPanic.CanvasManager
 
         [SerializeField] private List<FoodUIcon> _foodIcons; // Daftar mapping di Inspector
 
+
+        private void Start()
+        {
+            // Memastikan saat game mulai, pesanan pertama langsung diacak
+            ShowRandomOrder();
+        }
+
         public void UpdateScoreUI(int score)
         {
-
             int index = score - 6;
             if (score < 6)
             {
@@ -51,15 +64,22 @@ namespace CookOrPanic.CanvasManager
             {
                 _scoreDisplayImage.sprite = _scoreSprites[index];
                 _scoreDisplayImage.enabled = true;
-            }
 
-            _scoreDisplayImage.transform.localScale = Vector3.zero;
-            _scoreDisplayImage.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
-        }
-     
-        public void UpdateUITimer(float time)
+                // Reset scale sebelum animasi agar konsisten
+                _scoreDisplayImage.transform.localScale = Vector3.zero;
+                _scoreDisplayImage.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+            }
+        }   
+
+        public void UpdateUITimerCooking(float time)
         {
             _timerText.text = time.ToString("F1") + "s";
+
+        }
+
+        public void UpdateUITimerBook(float time)
+        {
+            _timerCooking.TimerBook(Time.deltaTime);
         }
 
         public void UpdateAngerBar(float angerValue)
@@ -68,27 +88,35 @@ namespace CookOrPanic.CanvasManager
         }
         public void ShowRandomOrder()
         {
-            if (_foodIcons.Count == 0) return;
-
-            // 1. Reset logika Timer internal
-            if (_timer != null)
+            // 🔥 STOP kalau masih tutorial
+            if (TutorialManager.Instance != null && TutorialManager.Instance._isTutorialMode)
             {
-                _timer.StopTimer(); // Ini akan membuat _currentTime = 0 di script Timer
+                Debug.Log("<color=yellow>[CanvasManager]</color> Skip random order (Tutorial Mode aktif)");
+                return;
             }
 
-            // 2. PAKSA Update UI ke angka 0 secara manual
-            // Tanpa ini, teks UI mungkin masih menampilkan angka terakhir dari pesanan sebelumnya
-            UpdateUITimer(0f);
+            if (_foodIcons.Count == 0) return;
 
-            // --- Sisa kode acak pesanan ---
+            if (_timerCooking != null)
+            {
+                _timerCooking.StopTimer();
+            }
+
+            UpdateUITimerCooking(0f);
+
             int randomIndex = Random.Range(0, _foodIcons.Count);
             FoodUIcon randomOrder = _foodIcons[randomIndex];
             CurrentTargetFood = randomOrder.type;
 
+            Debug.Log($"<color=green>[ORDER]</color> Pesanan Baru: <b>{CurrentTargetFood}</b>");
+
             if (_foodIconDisplay != null)
             {
                 _foodIconDisplay.sprite = randomOrder.icon;
-                if (_notificationPanel != null) _notificationPanel.SetActive(true);
+
+                if (_notificationPanel != null)
+                    _notificationPanel.SetActive(true);
+
                 _foodIconDisplay.transform.localScale = Vector3.zero;
                 _foodIconDisplay.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
             }
@@ -114,40 +142,42 @@ namespace CookOrPanic.CanvasManager
             if (_notificationPanel != null) _notificationPanel.SetActive(false);
         }
 
+
+        /// <summary>
+        /// Memulai hitung mundur untuk Panel (misal: Resep tertutup dalam 5 detik)
+        /// </summary>
+        public void StartPanelTimer(float duration)
+        {
+            if (_timerCooking != null)
+            {
+                _timerCooking.StartTimer(duration, Timer.TimerMode.CountDown); // ✅ WAJIB
+            }
+
+            StopCoroutine("PanelTimerRoutine");
+            StartCoroutine(PanelTimerRoutine());
+        }
+
+        private IEnumerator PanelTimerRoutine()
+        {
+            UIAnimator.Show(_bookTimerPanel, UIAnimator.AnimationType.Scale);
+
+            while (_timerCooking != null && _timerCooking._isRunning)
+            {
+                _timerCooking.TimerBook(Time.deltaTime);
+
+                if (_TimerBook != null)
+                {
+                    _TimerBook.text = _timerCooking.GetCurrentTime().ToString("F0");
+                }
+
+                yield return null;
+            }
+
+            UIAnimator.Hide(_bookTimerPanel, UIAnimator.AnimationType.Scale);
+        }
         public void PanelControl()
         {
-            //_panel._panelImage.DOKill();
-            //_panel._panelImage.rectTransform.DOKill();
-            //switch (_panel._panelType)
-            //{
-            //    case Panel.PanelType.PanelPanduan:
-            //        _panel._panelImage.transform
-            //            .DOScale(Vector3.zero, 0.3f)
-            //            .SetEase(Ease.InBack)
-            //            .OnComplete(() => _panel._panelImage.gameObject.SetActive(false));
-            //        break;
-
-            //    case Panel.PanelType.PanelResep:
-            //        _panel._panelImage
-            //            .DOFade(0f, 0.3f)
-            //            .SetEase(Ease.Linear)
-            //            .OnComplete(() => _panel._panelImage.gameObject.SetActive(false));
-            //        break;
-
-            //    case Panel.PanelType.PanelKlikPanduan:
-            //        _panel._panelImage.rectTransform
-            //            .DOAnchorPos(new Vector2(-800, 0), 0.3f)
-            //            .SetEase(Ease.InCubic)
-            //            .OnComplete(() => _panel._panelImage.gameObject.SetActive(false));
-            //        break;
-
-            //    case Panel.PanelType.PanelKlikResep:
-            //        _panel._panelImage.rectTransform
-            //            .DOAnchorPos(new Vector2(800, 0), 0.3f)
-            //            .SetEase(Ease.InCubic)
-            //            .OnComplete(() => _panel._panelImage.gameObject.SetActive(false));
-            //        break;
-            //}
+          
         }
 
         public void ShowGameOver()

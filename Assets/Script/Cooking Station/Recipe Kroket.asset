@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5deeff5cce846904a9ff1916e0148149, type: 3}
+  m_Name: Recipe Kroket
+  m_EditorClassIdentifier: 
+  _resultFoodType: 1
+  _requirements:
+  - _ingredientName: Kentang
+    _ingredientType: 13
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Telur
+    _ingredientType: 0
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Merica
+    _ingredientType: 21
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Ayam Giling
+    _ingredientType: 1
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Wortel
+    _ingredientType: 18
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Bawang Putih
+    _ingredientType: 8
+    _requiredState: 0
+    _requiredAmount: 2
+  - _ingredientName: Bawang Merah
+    _ingredientType: 8
+    _requiredState: 0
+    _requiredAmount: 4
+  _resultPrefabs:
+  - {fileID: 6335914867865313297, guid: c7f6c4f92f6538943bb52d4ee04d5a7d, type: 3}
+  _cookedScore: 10

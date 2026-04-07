@@ -26,7 +26,8 @@ namespace CookOrPanic.Ingredient
         TepungBeras,
         Wortel,
         Wijen,
-        TepungKetan
+        TepungKetan,
+        Merica
 
     }
     public class Ingredient : MonoBehaviour

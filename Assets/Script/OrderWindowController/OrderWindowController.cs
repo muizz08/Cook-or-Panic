@@ -23,8 +23,6 @@ namespace CookOrPanic.OrderWindowController
         [SerializeField] private Transform _trayReturnPoint;
         private bool _isReturningTray = false;
 
-
-
         [Header("Prefabs & References")]
         [SerializeField] private ProcessingMechanic _mechanicManager;
 
@@ -74,8 +72,6 @@ namespace CookOrPanic.OrderWindowController
             if (plate != null) plate.LockPlateToTray();
         }
 
-
-
         public void OnTrayEnteredWindow(GameObject trayObject)
         {
             // ❗ CEK DULU
@@ -88,7 +84,6 @@ namespace CookOrPanic.OrderWindowController
 
             Debug.Log("WINDOW TERPANGGIL"); 
         }
-
 
         public void PushBell()
         {
@@ -137,8 +132,6 @@ namespace CookOrPanic.OrderWindowController
             // 1. Matikan socket agar tidak mendeteksi objek saat proses pindah
             _windowSocket.enabled = false;
 
-
-
             XRGrabInteractable interactable = trayObject.GetComponent<XRGrabInteractable>();
             // Ambil Rigidbody nampan sekali di awal
             Rigidbody trayRb = trayObject.GetComponent<Rigidbody>();
@@ -182,7 +175,7 @@ namespace CookOrPanic.OrderWindowController
             // 2. TELEPORT KE RAK PENGEMBALIAN (Nampan + Piring)
             if (trayObject != null && _trayReturnPoint != null)
             {
-                trayObject.transform.SetParent(null);
+                //trayObject.transform.SetParent(null);
                 trayObject.transform.SetPositionAndRotation(_trayReturnPoint.position, _trayReturnPoint.rotation);
                 Debug.Log("Teleport nampan bersih tanpa glitch");
             }

@@ -36,30 +36,26 @@ namespace CookOrPanic.ReturnToSender
 
         private IEnumerator TeleportProcess()
         {
-            // 1. Matikan Grab agar tidak nyangkut/nempel socket
             yield return new WaitForSeconds(0.1f);
-
-            // 2. Reset Physics
-            if (_rb != null)
-            {
-                _rb.velocity = Vector3.zero;
-                _rb.angularVelocity = Vector3.zero;
-                _rb.isKinematic = true;
-            }
+            // 1. Langsung matikan agar tidak terbaca lagi oleh Socket Panci
             _grabInteractable.enabled = false;
 
+            if (_rb != null)
+            {
+                _rb.isKinematic = true;
+              
+            }
 
-            // 3. Pindah posisi
+            // 2. PINDAH INSTAN (Tanpa tunggu 0.5 detik di awal)
             transform.SetPositionAndRotation(
                 _targetTransform.position,
                 _targetTransform.rotation
             );
 
-            // 4. JEDA PENTING: Tunggu 0.1 detik (atau yield return null)
-            // Ini memberi waktu Unity update Collider ke posisi baru
+            // 3. JEDA SINGKAT (Hanya untuk sinkronisasi physics Unity)
             yield return new WaitForSeconds(0.1f);
 
-            // 5. Nyalakan kembali
+            // 4. Aktifkan kembali
             _grabInteractable.enabled = true;
 
             if (_rb != null)
@@ -67,7 +63,7 @@ namespace CookOrPanic.ReturnToSender
                 _rb.isKinematic = false;
             }
 
-            Debug.Log($"{gameObject.name} sudah di posisi baru dan bisa digrab lagi.");
+            Debug.Log(gameObject.name + " sudah kembali ke meja.");
         }
 
         private void OnDestroy()

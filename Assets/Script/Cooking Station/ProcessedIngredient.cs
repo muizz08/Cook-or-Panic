@@ -24,6 +24,12 @@ namespace CookOrPanic.ProcessedIngredient
             set { _ingredientType = value; }
         }
 
+
+        private void Awake()
+        {
+            // Memastikan setiap bahan yang baru muncul statusnya adalah Raw
+            _currentState = FoodState.Raw;
+        }
         public void Raw()
         {
             _currentState = FoodState.Raw;

@@ -14,33 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultFoodType: 0
   _requirements:
-  - _ingredientName: Terigu
-    _ingredientType: 5
+  - _ingredientName: Tepung Ketan
+    _ingredientType: 20
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Gula
     _ingredientType: 9
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientName: Kentang
-    _ingredientType: 13
+  - _ingredientName: Wijen
+    _ingredientType: 19
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientName: Kcang Hijau
+  - _ingredientName: Kacang Hijau
     _ingredientType: 15
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Penyedap Rasa
     _ingredientType: 11
-    _requiredState: 1
-    _requiredAmount: 1
-  - _ingredientName: Penyedap Rasa
-    _ingredientType: 11
-    _requiredState: 1
-    _requiredAmount: 1
-  - _ingredientName: Penyedap Rasa
-    _ingredientType: 11
-    _requiredState: 1
+    _requiredState: 0
     _requiredAmount: 1
   _resultPrefabs:
   - {fileID: 5485417267940259033, guid: 2299dda3913a29045b5f70b3203888e9, type: 3}

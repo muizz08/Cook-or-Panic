@@ -306,7 +306,6 @@ namespace CookOrPanic.ProcessingMechanic
             if (rb != null)
             {
                 rb.isKinematic = true;
-                rb.velocity = Vector3.zero;
             }
 
         }

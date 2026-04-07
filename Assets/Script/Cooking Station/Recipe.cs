@@ -9,7 +9,7 @@ namespace CookOrPanic.Recipe
     using CookOrPanic.Food;
     using CookOrPanic.RecipeRequirement;
     using CookOrPanic.ProcessedIngredient;
-    using CookOrPanic.Ingredient;
+  
 
     [CreateAssetMenu(fileName = "Recipe", menuName = "Recipe")]
     public class Recipe : ScriptableObject

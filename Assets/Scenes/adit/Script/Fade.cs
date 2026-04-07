@@ -22,7 +22,7 @@ public class FadeIn : MonoBehaviour
     IEnumerator FadeOutAndLoad(string sceneName)
     {
         yield return StartCoroutine(Fade(1)); // Tutup layar
-        SceneManager.LoadScene(sceneName);
+        //SceneManager.LoadScene(sceneName);
     }
 
     IEnumerator Fade(float targetAlpha)
