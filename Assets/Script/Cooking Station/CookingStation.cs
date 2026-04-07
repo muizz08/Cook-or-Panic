@@ -44,22 +44,22 @@
             [SerializeField] private CanvasManager _canvasManager;
        
 
-            // Tambahkan di bagian Header References
-            [Header("UI Checklist & Feedback")]
-            [SerializeField] private GameObject _checklistPrefab;
-            [SerializeField] private Transform _checklistParent;
-            [SerializeField] private ScrollRect _checklistScrollRect;
-            [SerializeField] private CanvasGroup _wrongIngredientPopup; // Popup "Bahan Salah"
+            //// Tambahkan di bagian Header References
+            //[Header("UI Checklist & Feedback")]
+            //[SerializeField] private GameObject _checklistPrefab;
+            //[SerializeField] private Transform _checklistParent;
+            //[SerializeField] private ScrollRect _checklistScrollRect;
+            //[SerializeField] private CanvasGroup _wrongIngredientPopup; // Popup "Bahan Salah"
 
-            [Header("UI Panels")]
-            [SerializeField] private Panel.Panel _tombolKlikResep;
-            [SerializeField] private Panel.Panel _isiPanelResep;
+            //[Header("UI Panels")]
+            //[SerializeField] private Panel.Panel _tombolKlikResep;
+            //[SerializeField] private Panel.Panel _isiPanelResep;
             private float _elapsedCookingTime;
             private bool _isStoveOn = false;
             private bool _isAdukShown = false;
 
 
-        private Dictionary<Ingredient.IngredientType, GameObject> _activeChecklistUI = new Dictionary<Ingredient.IngredientType, GameObject>();
+        //private Dictionary<Ingredient.IngredientType, GameObject> _activeChecklistUI = new Dictionary<Ingredient.IngredientType, GameObject>();
             private List<IngredientData> _ingredientsInContainer = new List<IngredientData>();
         
 
@@ -67,7 +67,7 @@
             [SerializeField] private Recipe _tutorialRecipe;
 
             [Header("Timer Trigger Settings")]
-            private bool _isRecipeOpened = false;
+  
 
             public System.Action<float> OnIngredientError;
 
@@ -104,33 +104,34 @@
                     _oilSocket.OnFoodEntered += OnFoodPlacedInOil;
                 }
             }
-      
-         
 
+
+
+        // --- LOGIKA ADUK BAHAN ---
         // --- LOGIKA ADUK BAHAN ---
         private void OnIngredientEntered(ProcessedIngredient ingredient)
         {
-            Ingredient.IngredientType incomingType = ingredient.GetIngredientType();
-            FoodState incomingState = ingredient.GetState();
+            if (_availableRecipe == null || _availableRecipe.Count == 0)
+            {
+                Debug.LogError("Tidak ada resep!");
+                return;
+            }
+
+            var incomingType = ingredient.GetIngredientType();
+            var incomingState = ingredient.GetState();
 
             string displayName = "";
             bool isIngredientValid = false;
             bool isTooMany = false;
 
-            foreach (Recipe recipe in _availableRecipe)
+            foreach (var recipe in _availableRecipe) // ✅ loop semua resep
             {
-                foreach (RecipeRequirement.RecipeRequirement req in recipe._requirements)
+                foreach (var req in recipe._requirements) // ✅ ambil requirement dari tiap resep
                 {
-                    // 1. Cek apakah tipe dan state cocok dengan resep
                     if (req._ingredientType == incomingType && req._requiredState == incomingState)
                     {
-                        // 2. Cek jumlah yang sudah ada di wadah
-                        int currentCount = 0;
-                        foreach (IngredientData input in _ingredientsInContainer)
-                        {
-                            if (input.type == incomingType && input.state == incomingState)
-                                currentCount++;
-                        }
+                        int currentCount = _ingredientsInContainer.FindAll(x =>
+                            x.type == incomingType && x.state == incomingState).Count;
 
                         if (currentCount < req._requiredAmount)
                         {
@@ -140,34 +141,32 @@
                         }
                         else
                         {
-                            isTooMany = true; // Bahan bener, tapi jumlahnya udah cukup
+                            isTooMany = true;
                         }
                     }
                 }
-                if (isIngredientValid) break;
+
+                if (isIngredientValid) break; // keluar kalau sudah ketemu resep yang cocok
             }
 
+            // === RESULT ===
             if (isIngredientValid)
             {
+                Debug.Log($"<color=green>[VALID]</color> {incomingType}");
                 HandleCorrectIngredient(ingredient, displayName);
             }
             else if (isTooMany)
             {
-                // ✅ SUDAH ADA DI RESEP, TAPI KELEBIHAN
-                Debug.Log("<color=orange>BAHAN SUDAH PENUH:</color> " + incomingType);
-
-                // ⛔ JANGAN dianggap salah
-                Destroy(ingredient.gameObject); // atau return ke meja
+                Debug.LogWarning($"<color=orange>[FULL]</color> {incomingType} kebanyakan");
+                HandleWrongIngredient(ingredient);
             }
             else
             {
-                // ❌ BENAR-BENAR SALAH
-                Debug.Log("<color=red>BAHAN SALAH:</color> " + incomingType + " (" + incomingState + ")");
+                Debug.LogError($"<color=red>[WRONG]</color> {incomingType} tidak ada di resep manapun");
                 HandleWrongIngredient(ingredient);
             }
         }
-
-        private void HandleCorrectIngredient(ProcessedIngredient ingredient, string nameToDisplay)
+        protected virtual void HandleCorrectIngredient(ProcessedIngredient ingredient, string nameToDisplay)
             {
                 var type = ingredient.GetIngredientType();
 
@@ -178,28 +177,28 @@
                 });
 
                 bool isTutorial = TutorialManager.Instance != null && TutorialManager.Instance._isTutorialMode;
-                if (!_activeChecklistUI.ContainsKey(type) && !isTutorial)
-                {
-                    GameObject newChecklist = Instantiate(_checklistPrefab, _checklistParent);
+                //if (!_activeChecklistUI.ContainsKey(type) && !isTutorial)
+                //{
+                //    GameObject newChecklist = Instantiate(_checklistPrefab, _checklistParent);
 
-                    // 1. Set text dulu
-                    var textMesh = newChecklist.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                    if (textMesh != null) textMesh.text = nameToDisplay;
+                //    // 1. Set text dulu
+                //    var textMesh = newChecklist.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                //    if (textMesh != null) textMesh.text = nameToDisplay;
 
-                    // 2. Reset Scale ke 0 sebelum aktif agar tidak "flash" ukuran penuh
-                    newChecklist.transform.localScale = Vector3.zero;
+                //    // 2. Reset Scale ke 0 sebelum aktif agar tidak "flash" ukuran penuh
+                //    newChecklist.transform.localScale = Vector3.zero;
 
-                    // 3. PAKSA Layout Group menghitung posisi detik ini juga
-                    // Gunakan LayoutRebuilder pada parent-nya
-                    Canvas.ForceUpdateCanvases();
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(_checklistParent.GetComponent<RectTransform>());
+                //    // 3. PAKSA Layout Group menghitung posisi detik ini juga
+                //    // Gunakan LayoutRebuilder pada parent-nya
+                //    Canvas.ForceUpdateCanvases();
+                //    LayoutRebuilder.ForceRebuildLayoutImmediate(_checklistParent.GetComponent<RectTransform>());
 
-                    // 4. Baru jalankan animasi DOTween
-                    newChecklist.transform.DOKill();
-                    newChecklist.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+                //    // 4. Baru jalankan animasi DOTween
+                //    newChecklist.transform.DOKill();
+                //    newChecklist.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
 
-                    _activeChecklistUI.Add(type, newChecklist);
-                }
+                //    _activeChecklistUI.Add(type, newChecklist);
+                //}
 
             // Animasi tombol aduk juga sebaiknya pakai DOKill agar tidak tumpang tindih
             if (_ingredientsInContainer.Count == 1 && !_isAdukShown)
@@ -241,7 +240,7 @@
                 Destroy(ingredient.gameObject);
             }
 
-            private void ShowWrongVisualFeedback()
+            protected virtual void ShowWrongVisualFeedback()
             {
                 // 1. Play Error Sound
                 if (AudioManager.Instance != null)
@@ -249,23 +248,23 @@
                     AudioManager.Instance.PlaySFX("ErrorBahan"); // Make sure "ErrorBahan" exists in your AudioManager
                 }
 
-                // 2. Show the "Wrong Ingredient" Popup using DOTween
-                if (_wrongIngredientPopup != null)
-                {
-                    // Kill any running animations on this object to prevent overlap
-                    _wrongIngredientPopup.DOKill();
+                //// 2. Show the "Wrong Ingredient" Popup using DOTween
+                //if (_wrongIngredientPopup != null)
+                //{
+                //    // Kill any running animations on this object to prevent overlap
+                //    _wrongIngredientPopup.DOKill();
 
-                    // Reset alpha and scale
-                    _wrongIngredientPopup.alpha = 0;
-                    _wrongIngredientPopup.gameObject.SetActive(true);
+                //    // Reset alpha and scale
+                //    _wrongIngredientPopup.alpha = 0;
+                //    _wrongIngredientPopup.gameObject.SetActive(true);
 
-                    // Sequence: Fade In -> Wait -> Fade Out
-                    Sequence s = DOTween.Sequence();
-                    s.Append(_wrongIngredientPopup.DOFade(1, 0.2f));
-                    s.AppendInterval(1.5f);
-                    s.Append(_wrongIngredientPopup.DOFade(0, 0.5f));
-                    s.OnComplete(() => _wrongIngredientPopup.gameObject.SetActive(false));
-                }
+                //    // Sequence: Fade In -> Wait -> Fade Out
+                //    Sequence s = DOTween.Sequence();
+                //    s.Append(_wrongIngredientPopup.DOFade(1, 0.2f));
+                //    s.AppendInterval(1.5f);
+                //    s.Append(_wrongIngredientPopup.DOFade(0, 0.5f));
+                //    s.OnComplete(() => _wrongIngredientPopup.gameObject.SetActive(false));
+                //}
             }
 
             public void TryCook()
@@ -334,44 +333,55 @@
         {
             _tombolAngkat.gameObject.SetActive(true);
 
+            // Variabel pembantu agar UI tidak dipanggil terus-menerus tiap frame
+            bool wasStoveOnLastFrame = !_isStoveOn;
+
             while (foodScript != null && foodScript._foodState == FoodState.Raw)
             {
-                // 1. CEK KONDISI KOMPOR
                 if (!_isStoveOn)
                 {
-                    // Kompor MATI: Matikan semua efek
-                    UIAnimator.Show(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.PulseFade);
-                    if (_foodFumesParticle.isPlaying) _foodFumesParticle.Stop();
-                    AudioManager.Instance.StopSFX("MasakAudio");
+                    // Jika baru saja mati (panggil UI hanya sekali)
+                    if (wasStoveOnLastFrame)
+                    {
+                        UIAnimator.Show(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.PulseFade);
+                        if (_foodFumesParticle.isPlaying) _foodFumesParticle.Stop();
+                        AudioManager.Instance.StopSFX("MasakAudio");
+                        wasStoveOnLastFrame = false;
+                    }
 
-                    // TUNGGU sampai dinyalakan kembali
                     yield return new WaitUntil(() => _isStoveOn);
                 }
 
-                // 2. JIKA SUDAH NYALA (Atau baru dinyalakan kembali)
-                UIAnimator.Show(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.PulseFade);
-
-                // Mainkan suara hanya jika belum bunyi (agar tidak pecah/berulang dari awal)
-                if (!AudioManager.Instance.IsPlaying("MasakAudio"))
+                // --- JIKA NYALA ---
+                // Jika baru saja dinyalakan kembali (panggil UI hanya sekali)
+                if (!wasStoveOnLastFrame)
                 {
-                    AudioManager.Instance.PlaySFX("MasakAudio");
+                    // SEHARUSNYA DI SINI ADALAH HIDE, BUKAN SHOW
+                    UIAnimator.Hide(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.Fade);
+
+                    if (!AudioManager.Instance.IsPlaying("MasakAudio"))
+                        AudioManager.Instance.PlaySFX("MasakAudio");
+
+                    if (!_foodFumesParticle.isPlaying) _foodFumesParticle.Play();
+
+                    wasStoveOnLastFrame = true;
                 }
 
-                if (!_foodFumesParticle.isPlaying) _foodFumesParticle.Play();
-
-                // 3. PROSES TIMER
+                // 3. PROSES TIMER (Tetap berjalan tiap frame)
                 if (!_cookingTimer._isRunning) _cookingTimer.StartTimer(999f);
 
                 _elapsedCookingTime += Time.deltaTime;
                 _cookingTimer.TimerCooking(Time.deltaTime);
-                _canvasManager.UpdateUITimerCooking(_cookingTimer.GetCurrentTime());
+                _canvasManager.UpdateUITimerCooking(_elapsedCookingTime);
 
                 yield return null;
             }
 
-            // Keluar dari Loop (Makanan matang/diangkat)
+            // Cleanup saat selesai
             if (_foodFumesParticle != null) _foodFumesParticle.Stop();
             AudioManager.Instance.StopSFX("MasakAudio");
+            // Pastikan warning hilang saat makanan diangkat
+            UIAnimator.Hide(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.Fade);
         }
 
 
@@ -420,7 +430,7 @@
 
             private void UpdateVisualIngredient()
             {
-                float _sebaranRadius = 0.08f;
+                float _sebaranRadius = 0.15f;
                 if (_ingredientsInContainer.Count == 0) return;
 
                 var lastType = _ingredientsInContainer[_ingredientsInContainer.Count - 1].type;
@@ -533,27 +543,25 @@
             }
 
       
-  
-
-            public void ClearStation()
+            protected virtual void ClearStation()
             {
                 _ingredientsInContainer.Clear();
                 _isAdukShown = false;
 
             // Hapus UI Checklist
-                foreach (var ui in _activeChecklistUI.Values) { Destroy(ui); }
-                _activeChecklistUI.Clear();
+                //foreach (var ui in _activeChecklistUI.Values) { Destroy(ui); }
+                //_activeChecklistUI.Clear();
 
                 // Hapus visual gundukan
                 foreach (Transform child in _gundukanSpawnPoint) { Destroy(child.gameObject); }
 
                 _tombolAduk.gameObject.SetActive(false);
 
-                // RESET LOCK DI SINI
-                if (_tombolKlikResep != null) _tombolKlikResep.ResetPanelLock();
-                if (_isiPanelResep != null) _isiPanelResep.ResetPanelLock();
+                //// RESET LOCK DI SINI
+                //if (_tombolKlikResep != null) _tombolKlikResep.ResetPanelLock();
+                //if (_isiPanelResep != null) _isiPanelResep.ResetPanelLock();
 
-                _isRecipeOpened = false;
+                //_isRecipeOpened = false;
                 Debug.Log("<color=green>Station Cleared: Tombol resep bisa ditekan lagi.</color>");
             }
 

@@ -43865,12 +43865,6 @@ MonoBehaviour:
   _drainSocket: {fileID: 321220064}
   _cookingTimer: {fileID: 1166996250}
   _canvasManager: {fileID: 1239124347}
-  _checklistPrefab: {fileID: 0}
-  _checklistParent: {fileID: 0}
-  _checklistScrollRect: {fileID: 0}
-  _wrongIngredientPopup: {fileID: 0}
-  _tombolKlikResep: {fileID: 0}
-  _isiPanelResep: {fileID: 0}
   _tutorialRecipe: {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}
   _ingredientVisuals:
   - _type: 0

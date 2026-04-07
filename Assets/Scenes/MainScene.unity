@@ -1620,7 +1620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.142
+      value: -10.065
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -15600,7 +15600,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.707
+      value: -9.727
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -19543,7 +19543,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &270176425
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20070,7 +20070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.005119993
+      value: 0.006029993
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.z
@@ -21990,7 +21990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.007540002
+      value: -0.006630002
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.z
@@ -23502,7 +23502,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.584001
+      value: -9.604
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -30633,7 +30633,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.119
+      value: -10.042
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -32764,7 +32764,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.485001
+      value: -9.45
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -33398,7 +33398,7 @@ MonoBehaviour:
   m_SelectEntered:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 716048273}
+      - m_Target: {fileID: 716048275}
         m_TargetAssemblyTypeName: CookOrPanic.CookingStation.CookingStation, Assembly-CSharp
         m_MethodName: ToggleStove
         m_Mode: 1
@@ -36223,7 +36223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.833
+      value: -9.798
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -48610,7 +48610,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 716048274}
-  - component: {fileID: 716048273}
+  - component: {fileID: 716048275}
   m_Layer: 0
   m_Name: '@cooking manager '
   m_TagString: Untagged
@@ -48618,76 +48618,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &716048273
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 716048272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 820d27ff1838def4e8859c934c560813, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _availableRecipe:
-  - {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}
-  - {fileID: 11400000, guid: 277c8c20eac82f3449a57981d14aff26, type: 2}
-  - {fileID: 11400000, guid: 3e9385b8f43ff5843a99ea4e7696afdd, type: 2}
-  _spawnPoint: {fileID: 545416364}
-  _tombolAduk: {fileID: 1082762805}
-  _gundukanSpawnPoint: {fileID: 268043580}
-  _tombolAngkat: {fileID: 2138565426}
-  _foodFumesParticle: {fileID: 64060286}
-  _mixingParticle: {fileID: 795726644}
-  _adonanSocket: {fileID: 545416359}
-  _oilSocket: {fileID: 1684475704}
-  _drainSocket: {fileID: 893115257}
-  _cookingTimer: {fileID: 1684475703}
-  _canvasManager: {fileID: 1937799164}
-  _checklistPrefab: {fileID: 1154756949553970406, guid: 340e6b783b14e8d4bbfb4f5e50b7c071, type: 3}
-  _checklistParent: {fileID: 1145117175}
-  _checklistScrollRect: {fileID: 1003849326}
-  _wrongIngredientPopup: {fileID: 270176429}
-  _tombolKlikResep: {fileID: 2008787082}
-  _isiPanelResep: {fileID: 429301212}
-  _tutorialRecipe: {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}
-  _ingredientVisuals:
-  - _type: 0
-    _visualObject: {fileID: 5244382279372125433, guid: 7f11334f1578d2145b688660f8026b18, type: 3}
-  - _type: 6
-    _visualObject: {fileID: 4610392256282147308, guid: d6f2426d5e24df144b2e0a5135d98aa8, type: 3}
-  - _type: 8
-    _visualObject: {fileID: 2327203359054097946, guid: 6c1226384feab3d499304f1479d64a23, type: 3}
-  - _type: 1
-    _visualObject: {fileID: 2664573029203511602, guid: 3f689b8113415dc4b8fa97d3b7eae99a, type: 3}
-  - _type: 2
-    _visualObject: {fileID: 2664573029203511602, guid: 3f689b8113415dc4b8fa97d3b7eae99a, type: 3}
-  - _type: 7
-    _visualObject: {fileID: 352988801735935375, guid: 4650c892d1d7c204b86e8d5c0883c397, type: 3}
-  - _type: 15
-    _visualObject: {fileID: 1718106745876802269, guid: 825fd5cb8b4e32845b2e0fa96507b421, type: 3}
-  - _type: 0
-    _visualObject: {fileID: 5244382279372125433, guid: 7f11334f1578d2145b688660f8026b18, type: 3}
-  - _type: 16
-    _visualObject: {fileID: 9108245398812358875, guid: f52334a3e8c60f64a9bfb87ef0bf2819, type: 3}
-  - _type: 5
-    _visualObject: {fileID: 4544320519662636090, guid: 0b16ccf67475b314d9660e35ec12ba72, type: 3}
-  - _type: 13
-    _visualObject: {fileID: 7458456519646096220, guid: 5b55668076d89bb47a1d7cf347dab721, type: 3}
-  - _type: 9
-    _visualObject: {fileID: 4610392256282147308, guid: d6f2426d5e24df144b2e0a5135d98aa8, type: 3}
-  - _type: 11
-    _visualObject: {fileID: 6026859012924847267, guid: 416b7810785c5514fa9886a7d783b1c9, type: 3}
-  - _type: 18
-    _visualObject: {fileID: 9004718229539513966, guid: 657383bd4dc54b242b446a4b126ca156, type: 3}
-  - _type: 19
-    _visualObject: {fileID: 6736179079624962873, guid: 396f8dfa8ebc8ca4c86a6144b2c19534, type: 3}
-  - _type: 20
-    _visualObject: {fileID: 9018854045308217859, guid: 58b18ffa6dc36b8419034d3b134ed2e7, type: 3}
-  - _type: 17
-    _visualObject: {fileID: 7906457605415356680, guid: e6799c05157024249986e3ef21bbea82, type: 3}
-  _warningOnStoveGas: {fileID: 624949920}
 --- !u!4 &716048274
 Transform:
   m_ObjectHideFlags: 0
@@ -48708,6 +48638,55 @@ Transform:
   - {fileID: 1616373920}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &716048275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716048272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6246da1c870114ca80fe3b0ebc1791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _availableRecipe:
+  - {fileID: 11400000, guid: 277c8c20eac82f3449a57981d14aff26, type: 2}
+  - {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}
+  - {fileID: 11400000, guid: 3e9385b8f43ff5843a99ea4e7696afdd, type: 2}
+  _spawnPoint: {fileID: 545416364}
+  _tombolAduk: {fileID: 1082762805}
+  _gundukanSpawnPoint: {fileID: 268043580}
+  _tombolAngkat: {fileID: 2138565426}
+  _foodFumesParticle: {fileID: 64060286}
+  _mixingParticle: {fileID: 795726644}
+  _adonanSocket: {fileID: 545416359}
+  _oilSocket: {fileID: 1684475704}
+  _drainSocket: {fileID: 893115257}
+  _cookingTimer: {fileID: 1684475703}
+  _canvasManager: {fileID: 1937799164}
+  _tutorialRecipe: {fileID: 0}
+  _ingredientVisuals:
+  - _type: 0
+    _visualObject: {fileID: 5244382279372125433, guid: 7f11334f1578d2145b688660f8026b18, type: 3}
+  - _type: 9
+    _visualObject: {fileID: 4610392256282147308, guid: d6f2426d5e24df144b2e0a5135d98aa8, type: 3}
+  - _type: 15
+    _visualObject: {fileID: 1718106745876802269, guid: 825fd5cb8b4e32845b2e0fa96507b421, type: 3}
+  - _type: 13
+    _visualObject: {fileID: 7458456519646096220, guid: 5b55668076d89bb47a1d7cf347dab721, type: 3}
+  - _type: 17
+    _visualObject: {fileID: 7906457605415356680, guid: e6799c05157024249986e3ef21bbea82, type: 3}
+  - _type: 20
+    _visualObject: {fileID: 9018854045308217859, guid: 58b18ffa6dc36b8419034d3b134ed2e7, type: 3}
+  - _type: 19
+    _visualObject: {fileID: 6736179079624962873, guid: 396f8dfa8ebc8ca4c86a6144b2c19534, type: 3}
+  _warningOnStoveGas: {fileID: 624949920}
+  _checklistPrefab: {fileID: 1154756949553970406, guid: 340e6b783b14e8d4bbfb4f5e50b7c071, type: 3}
+  _checklistParent: {fileID: 1145117175}
+  _checklistScrollRect: {fileID: 1003849326}
+  _wrongIngredientPopup: {fileID: 270176429}
+  _isiPanelResep: {fileID: 429301212}
 --- !u!1 &722824875
 GameObject:
   m_ObjectHideFlags: 0
@@ -49592,7 +49571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.003
+      value: -10.058
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -62891,7 +62870,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.026
+      value: -10.004
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -70775,7 +70754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.142
+      value: -10.065
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -70937,7 +70916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.007540002
+      value: -0.006630002
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.z
@@ -77117,21 +77096,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 716048273}
+      - m_Target: {fileID: 716048275}
         m_TargetAssemblyTypeName: CookOrPanic.CookingStation.CookingStation, Assembly-CSharp
         m_MethodName: TryCook
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CookOrPanic.TutorialManager.TutorialManager, Assembly-CSharp
-        m_MethodName: FinishAmbilBahanStep
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -93398,7 +93365,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.991
+      value: -9.956
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -97437,7 +97404,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.886001
+      value: -9.941
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -99337,7 +99304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.007540002
+      value: -0.006630002
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.z
@@ -103118,7 +103085,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.607
+      value: -9.627
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -106432,7 +106399,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.508
+      value: -9.528
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -107370,7 +107337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.991
+      value: -9.956
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -114119,7 +114086,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.005119993
+      value: 0.00603
       objectReference: {fileID: 0}
     - target: {fileID: 1938786309990525701, guid: ff6e217e613f17a44a38b7e8aa7a0005, type: 3}
       propertyPath: m_LocalPosition.z
@@ -115288,7 +115255,7 @@ MonoBehaviour:
   _canvasManager: {fileID: 1937799164}
   _headChef: {fileID: 1616373918}
   _timer: {fileID: 1684475703}
-  _cookingStation: {fileID: 716048273}
+  _cookingStation: {fileID: 716048275}
   _panicThreshold: 0.8
   _heartEffect: {fileID: 1667244242}
 --- !u!4 &1675991189
@@ -124081,12 +124048,12 @@ GameObject:
   - component: {fileID: 1794524408}
   - component: {fileID: 1794524407}
   m_Layer: 0
-  m_Name: button Aduk (1)
+  m_Name: UI bahan salah
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1794524406
 RectTransform:
   m_ObjectHideFlags: 0
@@ -130712,7 +130679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.73
+      value: -9.75
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -133877,7 +133844,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.909
+      value: -9.964
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -134704,7 +134671,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.119
+      value: -10.097
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -134887,7 +134854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.968
+      value: -9.933
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -139561,7 +139528,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.81
+      value: -9.775
       objectReference: {fileID: 0}
     - target: {fileID: 8319007419880005247, guid: 68ae4460c2b84b343954e6b4baba327c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -144698,7 +144665,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 716048273}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CookOrPanic.CookingStation.CookingStation, Assembly-CSharp
         m_MethodName: ActionAngkatMakanan
         m_Mode: 1
