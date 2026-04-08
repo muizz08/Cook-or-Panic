@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Assets Resources/Prefabs/makanan/makanan fiks ukuran/Ayam Gilling .prefab.meta
 guid: 339aedd3e2aefba4b870987148fcc621
+========
+guid: 3f689b8113415dc4b8fa97d3b7eae99a
+>>>>>>>> develop:Assets/Assets Resources/Prefabs/makanan/makanan fiks ukuran/Ikan Giling.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

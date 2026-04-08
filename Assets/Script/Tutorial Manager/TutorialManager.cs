@@ -582,7 +582,7 @@ namespace CookOrPanic.TutorialManager
 
                 case TutorialStep.AmbilBahan:
                     UIAnimator.Show(_panelLanjut, UIAnimator.AnimationType.Scale);
-                    UIAnimator.Show(_panelCheckList, UIAnimator.AnimationType.Scale);
+                    
                     break;
 
                 case TutorialStep.NyalakanKompor:

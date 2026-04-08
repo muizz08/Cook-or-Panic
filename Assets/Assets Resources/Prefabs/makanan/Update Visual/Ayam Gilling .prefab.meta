@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Assets Resources/Prefabs/makanan/Update Visual/Ayam Gilling .prefab.meta
 guid: 588fbbc1442cfbf4da49a3b7d3a53480
+========
+guid: 807bb65815b311646ac4299f575234c0
+>>>>>>>> develop:Assets/Assets Resources/Prefabs/makanan/makanan fiks ukuran/Kentang Tumbuk.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 
