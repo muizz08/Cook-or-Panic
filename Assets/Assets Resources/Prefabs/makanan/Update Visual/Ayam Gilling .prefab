@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4257709862850570872
+--- !u!1 &1220683540407433773
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8224434609535351527}
-  m_Layer: 0
-  m_Name: Tepung roti
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8224434609535351527
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4257709862850570872}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.9244404, y: 0.019, z: 5.967}
-  m_LocalScale: {x: 0.078571096, y: 0.078571096, z: 0.078571096}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5962915721763176197}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7951808053907228873
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5962915721763176197}
-  - component: {fileID: 3482595056372060739}
-  - component: {fileID: 6467874335539801178}
+  - component: {fileID: 3346968126634133957}
+  - component: {fileID: 2529082545827621552}
+  - component: {fileID: 5185367655664833138}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -50,36 +18,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5962915721763176197
+--- !u!4 &3346968126634133957
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7951808053907228873}
+  m_GameObject: {fileID: 1220683540407433773}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0, y: -0.061189722, z: 0}
-  m_LocalScale: {x: 54.731316, y: 56.22799, z: 26.841957}
+  m_LocalRotation: {x: -0.7071069, y: 0, z: 0, w: 0.7071067}
+  m_LocalPosition: {x: -0.1071, y: 1.0087, z: 0.068536}
+  m_LocalScale: {x: 75.23819, y: 96.08282, z: 26.714767}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8224434609535351527}
+  m_Father: {fileID: 3638536569149215470}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3482595056372060739
+--- !u!33 &2529082545827621552
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7951808053907228873}
-  m_Mesh: {fileID: 4711208715938537054, guid: 0ab50b1ada7981d4b88796c37a3d0369, type: 3}
---- !u!23 &6467874335539801178
+  m_GameObject: {fileID: 1220683540407433773}
+  m_Mesh: {fileID: 4711208715938537054, guid: bd1ccb2cfd3482340a609504f20164bb, type: 3}
+--- !u!23 &5185367655664833138
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7951808053907228873}
+  m_GameObject: {fileID: 1220683540407433773}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -93,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3846018093981099296, guid: 0ab50b1ada7981d4b88796c37a3d0369, type: 3}
+  - {fileID: 9185737683893222716, guid: bd1ccb2cfd3482340a609504f20164bb, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -115,3 +83,35 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8333680916026806959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3638536569149215470}
+  m_Layer: 0
+  m_Name: 'Ayam Gilling '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3638536569149215470
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8333680916026806959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.413585, y: 0.09, z: 6.8901906}
+  m_LocalScale: {x: 0.054245, y: 0.054245, z: 0.054245}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3346968126634133957}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

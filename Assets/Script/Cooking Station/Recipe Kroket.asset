@@ -42,6 +42,10 @@ MonoBehaviour:
     _ingredientType: 8
     _requiredState: 0
     _requiredAmount: 4
+  - _ingredientName: Penyedap Rasa
+    _ingredientType: 11
+    _requiredState: 0
+    _requiredAmount: 1
   _resultPrefabs:
   - {fileID: 4785165345665510752, guid: 7eef4069d64ec4d4083e2f2194c65cc2, type: 3}
   _cookedScore: 10

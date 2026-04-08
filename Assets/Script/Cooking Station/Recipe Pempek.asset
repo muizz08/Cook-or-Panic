@@ -26,8 +26,8 @@ MonoBehaviour:
     _ingredientType: 8
     _requiredState: 0
     _requiredAmount: 3
-  - _ingredientName: Ayam Giling
-    _ingredientType: 1
+  - _ingredientName: Ikan Giling
+    _ingredientType: 2
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Penyedap Rasa
