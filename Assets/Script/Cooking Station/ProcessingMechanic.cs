@@ -108,7 +108,7 @@ namespace CookOrPanic.ProcessingMechanic
 
             if (_isGrinding) // Cek lagi siapa tahu pemain keburu mematikan
             {
-                AudioManager.Instance.PlaySFX("Grinder_Loop"); // Pastikan di Inspector SFX ini dicentang Loop
+                AudioManager.Instance.PlaySFX("GrinderLoop"); // Pastikan di Inspector SFX ini dicentang Loop
             }
 
             // 3. Selama mesin menyala, tunggu 2 detik untuk memproses daging
