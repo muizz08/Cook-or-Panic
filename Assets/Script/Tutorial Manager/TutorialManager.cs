@@ -12,6 +12,7 @@ namespace CookOrPanic.TutorialManager
     using CookOrPanic.ProcessedIngredient;
     using CookOrPanic.SocketController;
     using CookOrPanic.UIAnimator;
+    using CookOrPanic.Recipe;
 
     [Serializable]
     public class ArrowStepData
@@ -41,6 +42,8 @@ namespace CookOrPanic.TutorialManager
 
         [Header("Current Progress")]
         public TutorialStep currentStep = TutorialStep.Panduan;
+
+        
 
         [Header("Arrow System")]
         [SerializeField] private List<ArrowStepData> arrowSettings = new List<ArrowStepData>();

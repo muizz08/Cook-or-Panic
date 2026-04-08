@@ -37,6 +37,8 @@ namespace CookOrPanic.Panel
 
         [Header("Lock Settings")]
         private bool _isLocked = false;
+        private int _openCount = 0; // Tambahkan ini
+        private const int MAX_OPEN = 3; // Batas maksimal
         float _lastClickTime;
 
         [Header("Timer Trigger Settings")]
@@ -54,53 +56,45 @@ namespace CookOrPanic.Panel
 
         public void ToggleWithPartner(Panel partnerPanel)
         {
-            Debug.Log($"Klik: {gameObject.name} | Type: {_panelType} | IsLocked: {_isLocked}");
-
             if (Time.time - _lastClickTime < 0.15f) return;
             _lastClickTime = Time.time;
 
-            if (_isLocked)
-            {
-                Debug.Log($"<color=orange>{gameObject.name} LOCKED</color>");
-                return;
-            }
-            // 1. HARD LOCK CHECK
-            // Jika panel ini sudah dikunci, jangan biarkan masuk ke logika apa pun
-            if (_isLocked)
-            {
-                Debug.Log($"<color=orange>Panel {gameObject.name} ditolak karena sedang LOCKED!</color>");
-                return;
-            }
+            // Cek apakah sudah benar-benar terkunci
+            if (_isLocked) return;
 
             if (partnerPanel == null || _panelImage == null) return;
 
-            // 2. LOGIKA TOGGLE
             if (_panelImage.gameObject.activeSelf)
             {
-                // Jika sedang terbuka, kita tutup
                 this.HidePanel();
                 partnerPanel.ShowPanel();
             }
             else
             {
-                // 3. PROSES MEMBUKA (Ini yang kita kunci)
+                // PROSES MEMBUKA
                 this.ShowPanel();
                 partnerPanel.HidePanel();
 
-                // Kunci hanya jika BUKAN tutorial
                 bool isTutorial = TutorialManager.Instance != null && TutorialManager.Instance._isTutorialMode;
-                    
+
                 if (_panelType == PanelType.PanelResep && !isTutorial)
                 {
-                    _isLocked = true; // Kunci variabel
+                    _openCount++; // Tambah hitungan setiap kali buka
 
-                    // OPSIONAL: Matikan komponen Button agar secara fisik tidak bisa diklik di UI
-                    if (TryGetComponent(out Button btn))
+                    // HANYA kunci jika sudah mencapai batas 3
+                    if (_openCount >= MAX_OPEN)
                     {
-                        btn.interactable = false;
+                        _isLocked = true;
+                        if (TryGetComponent(out Button btn))
+                        {
+                            btn.interactable = false;
+                        }
+                        Debug.Log("<color=red>Jatah buka habis! Tombol dikunci.</color>");
                     }
-
-                    Debug.Log("<color=red>STATUS: Tombol Resep dikunci!</color>");
+                    else
+                    {
+                        Debug.Log($"<color=blue>Resep dibuka ({_openCount}/{MAX_OPEN})</color>");
+                    }
                 }
             }
         }
@@ -141,16 +135,32 @@ namespace CookOrPanic.Panel
             }
         }
 
+        public void ForceLockPanel()
+        {
+            _isLocked = true;
+            _openCount = MAX_OPEN; // Set maksimal agar sistem menganggap jatah sudah habis
+
+            if (TryGetComponent(out Button btn))
+            {
+                btn.interactable = false;
+            }
+
+            HidePanel(); // Tutup bukunya
+            Debug.Log($"<color=red>Panel {gameObject.name} KUNCI MATI karena timer habis!</color>");
+        }
+
         // Fungsi untuk membuka kunci (Dipanggil saat pesanan baru/reset)
         public void ResetPanelLock()
         {
             _isLocked = false;
+            _openCount = 0; // RESET hitungan kembali ke 0
             if (TryGetComponent(out Button btn))
             {
                 btn.interactable = true;
             }
-            Debug.Log("<color=green>STATUS: Tombol Resep dibuka kembali.</color>");
+            Debug.Log("<color=green>STATUS: Jatah buka resep di-reset.</color>");
         }
+
         private IEnumerator CloseAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
@@ -165,6 +175,34 @@ namespace CookOrPanic.Panel
             if (_contentRect != null)
             {
                 _contentRect.DOKill();
+            }
+
+            if (_panelType == PanelType.PanelResep)
+            {
+                // Cari CanvasManager di scene
+                var canvasMgr = FindObjectOfType<CanvasManager.CanvasManager>();
+                if (canvasMgr != null)
+                {
+                    // Panggil fungsi untuk menghentikan UI Timer buku
+                    // Pastikan fungsi StopTimer atau sejenisnya tersedia di CanvasManager
+                    canvasMgr.StopOrderTimer();
+
+                    // Atau jika Anda ingin spesifik menyembunyikan Panel Timer Buku saja:
+                    // Kita bisa menggunakan FindObjectOfType untuk mematikan timer spesifik
+                    // (Tergantung nama fungsi di CanvasManager Anda)
+                }
+            }
+
+            // --- LOGIKA UNTUK MEMATIKAN TIMER DI CANVAS ---
+            if (_panelType == PanelType.PanelResep)
+            {
+                // Cari script CanvasManager yang ada di scene
+                var canvasMgr = FindObjectOfType<CanvasManager.CanvasManager>();
+                if (canvasMgr != null)
+                {
+                    // Panggil fungsi yang baru kita buat di CanvasManager
+                    canvasMgr.StopBookTimer();
+                }
             }
 
             UIAnimator.Hide(_panelImage.gameObject, UIAnimator.AnimationType.Scale);
@@ -192,6 +230,7 @@ namespace CookOrPanic.Panel
                 StartCoroutine(DelayedUpdate());
             }
         }
+
 
 
         IEnumerator DelayedUpdate()

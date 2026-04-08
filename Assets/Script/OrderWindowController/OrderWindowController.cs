@@ -87,6 +87,7 @@ namespace CookOrPanic.OrderWindowController
 
         public void PushBell()
         {
+
             Debug.Log("<color=white>Bell:</color> Tombol Bel ditekan.");
 
             // Gunakan interactor dari socket secara langsung

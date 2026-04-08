@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5deeff5cce846904a9ff1916e0148149, type: 3}
   m_Name: Recipe Kroket
   m_EditorClassIdentifier: 
-  _resultFoodType: 1
+  _resultFoodType: 2
   _requirements:
   - _ingredientName: Kentang
     _ingredientType: 13
@@ -43,5 +43,5 @@ MonoBehaviour:
     _requiredState: 0
     _requiredAmount: 4
   _resultPrefabs:
-  - {fileID: 6335914867865313297, guid: c7f6c4f92f6538943bb52d4ee04d5a7d, type: 3}
+  - {fileID: 4785165345665510752, guid: 7eef4069d64ec4d4083e2f2194c65cc2, type: 3}
   _cookedScore: 10
