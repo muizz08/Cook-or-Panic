@@ -40,9 +40,6 @@ namespace CookOrPanic.CanvasManager
         [SerializeField] private TMP_Text _TimerPesanan;
         [SerializeField] private float _lamaPesanan;
 
-        private int _recipeOpenCount = 0; // Penghitung jumlah buka resep
-        [SerializeField] private int _maxRecipeOpen = 3; // Batas maksimal
-
 
         [SerializeField] private CookingStation _cookingStation;
         private Coroutine _activeOrderCoroutine;
