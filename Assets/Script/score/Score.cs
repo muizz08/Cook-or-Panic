@@ -24,6 +24,7 @@ namespace CookOrPanic.Score
         public void AddScore(Food food)
         {
             int baseScore = food._recipeOrigin._cookedScore;
+            int target = LevelController.Instance.GetTargetScore();
             FoodState state = food._foodState;
             AddScoreFromFood(baseScore, state);
         }
@@ -50,16 +51,17 @@ namespace CookOrPanic.Score
 
             // Di Score.cs -> fungsi AddScoreFromFood
             _currentScore += pointToAdd;
-         
 
-            if (LevelController.Instance != null)
+            // Di Score.cs sebelum IF
+            int target = LevelController.Instance.GetTargetScore();
+            Debug.Log("SKOR SEKARANG: " + _currentScore + " | TARGET DIAMBIL: " + target);
+
+            if (_currentScore >= target)
             {
-                // Cek apakah skor sudah mencapai atau melewati target level saat ini
-                if (_currentScore >= LevelController.Instance.GetTargetScore())
-                {
-                    LevelController.Instance.NexTLevel();
-                }
-            } 
+                LevelController.Instance.NexTLevel();
+            }
+
+ 
         }
 
         public int GetCurrentScore() => _currentScore;

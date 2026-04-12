@@ -65,7 +65,8 @@ PrefabInstance:
       value: Ikan Giling
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -1018664272722485354, guid: a9cea6bf88833fa43b766015d320a469, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a9cea6bf88833fa43b766015d320a469, type: 3}
@@ -105,8 +106,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.9999999, y: 0.8911322, z: 1.5506716}
-  m_Center: {x: 0, y: -0.4290554, z: -0.015925916}
+  m_Size: {x: 1.5447941, y: 0.67593485, z: 1.5506716}
+  m_Center: {x: 0.06738572, y: -0.3214567, z: -0.015925892}
 --- !u!54 &7877022129990759165
 Rigidbody:
   m_ObjectHideFlags: 0

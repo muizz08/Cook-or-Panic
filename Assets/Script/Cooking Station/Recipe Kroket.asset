@@ -15,7 +15,7 @@ MonoBehaviour:
   _resultFoodType: 2
   _requirements:
   - _ingredientName: Kentang
-    _ingredientType: 13
+    _ingredientType: 10
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Telur
@@ -23,7 +23,7 @@ MonoBehaviour:
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Merica
-    _ingredientType: 21
+    _ingredientType: 17
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Ayam Giling
@@ -31,17 +31,22 @@ MonoBehaviour:
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Wortel
-    _ingredientType: 18
+    _ingredientType: 14
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Bawang Putih
-    _ingredientType: 8
+    _ingredientType: 7
     _requiredState: 0
     _requiredAmount: 2
   - _ingredientName: Bawang Merah
-    _ingredientType: 8
+    _ingredientType: 6
     _requiredState: 0
     _requiredAmount: 4
+  - _ingredientName: Penyedap Rasa
+    _ingredientType: 9
+    _requiredState: 0
+    _requiredAmount: 1
   _resultPrefabs:
   - {fileID: 4785165345665510752, guid: 7eef4069d64ec4d4083e2f2194c65cc2, type: 3}
   _cookedScore: 10
+  _foodIcon: {fileID: 21300000, guid: 8d8abf75db6505641992c5643f3d1016, type: 3}

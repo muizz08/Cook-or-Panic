@@ -21,6 +21,8 @@ namespace CookOrPanic.GameSceneManager
 
         private void Awake()
         {
+           
+            transform.SetParent(null);
             if (Instance == null)
             {
                 Instance = this;
@@ -136,6 +138,20 @@ namespace CookOrPanic.GameSceneManager
                 faderGroup.interactable = true;
             }
         }
+
+        public void QuitGame()
+        {
+            // Log untuk memastikan tombol ditekan (muncul di Console)
+            Debug.Log("Game dihentikan...");
+
+            // Jika game sedang berjalan sebagai aplikasi build (.exe, .apk, dsb)
+            Application.Quit();
+
+            // Jika kamu sedang testing di Unity Editor (opsional, agar editor stop Play)
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        }   
 
 #if UNITY_EDITOR
         private void OnValidate()

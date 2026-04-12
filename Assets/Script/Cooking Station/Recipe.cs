@@ -19,6 +19,9 @@ namespace CookOrPanic.Recipe
         [SerializeField] public List<GameObject> _resultPrefabs;
         [SerializeField] public int _cookedScore;
 
+        [Header("Visual Settings")]
+        // Tambahkan ini agar tidak error lagi di CanvasManager
+        public Sprite _foodIcon;
 
         public bool Validate(List<ProcessedIngredient> ingredients)
         {

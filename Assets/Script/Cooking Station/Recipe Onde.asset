@@ -15,25 +15,26 @@ MonoBehaviour:
   _resultFoodType: 0
   _requirements:
   - _ingredientName: Tepung Ketan
-    _ingredientType: 20
+    _ingredientType: 16
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Gula
-    _ingredientType: 9
+    _ingredientType: 8
     _requiredState: 0
     _requiredAmount: 1
   - _ingredientName: Wijen
-    _ingredientType: 19
-    _requiredState: 0
-    _requiredAmount: 1
-  - _ingredientName: Kacang Hijau
     _ingredientType: 15
     _requiredState: 0
     _requiredAmount: 1
-  - _ingredientName: Penyedap Rasa
+  - _ingredientName: Kacang Hijau
     _ingredientType: 11
+    _requiredState: 0
+    _requiredAmount: 1
+  - _ingredientName: Penyedap Rasa
+    _ingredientType: 9
     _requiredState: 0
     _requiredAmount: 1
   _resultPrefabs:
   - {fileID: 5485417267940259033, guid: 2299dda3913a29045b5f70b3203888e9, type: 3}
   _cookedScore: 15
+  _foodIcon: {fileID: 21300000, guid: f1dd0942720ee9f47929912ef99daae5, type: 3}

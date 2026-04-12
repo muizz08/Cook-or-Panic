@@ -14,6 +14,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 6adcb78bc34ef7449b8828395bb2522e
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: cefeace608bb8e74591633863bbec410
+  - enabled: 1
+    path: Assets/Scenes/Winner.unity
+    guid: e8bc428343119da438727e6ebf2912b3
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: c919a8c7de137de4684c201214ca50e6, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 0fe387e676259af4783d040f6c5422a4, type: 2}

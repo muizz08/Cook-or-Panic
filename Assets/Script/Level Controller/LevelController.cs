@@ -23,11 +23,18 @@ namespace CookOrPanic.LevelController
             if (index >= 0 && index < _levels.Count)
             {
                 _levelIndex = index;
-                Debug.Log("<color=cyan><b>[LevelController]</b></color> Memuat Data Level Index: " + _levelIndex);
-                Debug.Log("<color=cyan><b>[LevelData]</b></color> Target Skor: " + _levels[_levelIndex]._targetScore);
+                var currentData = _levels[_levelIndex];
+
+                Debug.Log("<color=cyan>[LevelController]</color> Memuat Level: " + currentData._levelName);
+
+                // KIRIM DATA KE UI AGAR FOTO DAN TEKS BERUBAH
+                CookOrPanic.CanvasManager.CanvasManager ui = FindObjectOfType<CookOrPanic.CanvasManager.CanvasManager>();
+                if (ui != null)
+                {
+                    ui.SetupLevelUI(currentData);
+                }
             }
         }
-
         public void NexTLevel()
         {
             _levelIndex++;

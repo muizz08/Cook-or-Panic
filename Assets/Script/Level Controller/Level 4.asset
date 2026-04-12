@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 501dfcee4d0908b439ef5d5242296a50, type: 3}
   m_Name: Level 4
   m_EditorClassIdentifier: 
+  _levelName: Head Chef
+  _levelPreviewImage: {fileID: 21300000, guid: 52735113b557b194f8a0e3965f326d46, type: 3}
   _availableRecipes:
   - {fileID: 11400000, guid: 277c8c20eac82f3449a57981d14aff26, type: 2}
   - {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}

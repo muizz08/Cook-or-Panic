@@ -5,36 +5,47 @@ using DG.Tweening;
 
 namespace CookOrPanic.CookingStationWithUI
 {
+    using CookOrPanic.UIAnimator;
     using CookOrPanic.CookingStation;
     using CookOrPanic.TutorialManager;
     using CookOrPanic.ProcessedIngredient; // Pastikan namespace ini ada
     using CookOrPanic.AudioManager;      // Pastikan namespace ini ada
+    using CookOrPanic.Ingredient;
+    using CookOrPanic.Panel;
+
 
     public class CookingStationWithUI : CookingStation
     {
+
+        [Header("UI Panels")]
+        [SerializeField] private Panel _panelRecipe;
+
         [Header("UI Checklist & Feedback")]
         [SerializeField] private GameObject _checklistPrefab;
         [SerializeField] private Transform _checklistParent;
         [SerializeField] private ScrollRect _checklistScrollRect;
         [SerializeField] private CanvasGroup _wrongIngredientPopup;
 
-        [Header("UI Panels")]
-      
-        [SerializeField] private Panel.Panel _isiPanelResep;
-
-        private Dictionary<Ingredient.IngredientType, GameObject> _activeChecklistUI = new Dictionary<Ingredient.IngredientType, GameObject>();
+        [Header("UI Peringatan (DOTween)")]
+        [SerializeField] private CanvasGroup _warningOnStoveGas;
+        private Dictionary<IngredientType, GameObject> _activeChecklistUI = new Dictionary<IngredientType, GameObject>();
 
         // --- OVERRIDE LOGIKA UI SAAT BAHAN BENAR ---
-        protected override void HandleCorrectIngredient(ProcessedIngredient ingredient, string displayName)
+        // Ganti virtual menjadi override
+        protected override void HandleCorrectIngredient(ProcessedIngredient ingredient, string nameToDisplay, IngredientType pType = default)
         {
-            // 1. Jalankan logika dasar dari Parent (tambah data ke list, dsb)
-            base.HandleCorrectIngredient(ingredient, displayName);
+            // 1. Jalankan semua logika dasar (tambah data ke list, spawn gundukan, hancurkan objek)
+            base.HandleCorrectIngredient(ingredient, nameToDisplay, pType);
 
-            // 2. Jalankan logika UI khusus script ini
-            HandleUIOnCorrectIngredient(ingredient.GetIngredientType(), displayName);
+            // 2. Ambil Tipe Bahan untuk keperluan Dictionary UI
+            // Jika bumbu (ingredient null), gunakan pType. Jika bahan fisik, gunakan GetIngredientType()
+            IngredientType type = (ingredient != null) ? ingredient.GetIngredientType() : pType;
+
+            // 3. Jalankan logika UI Checklist
+            HandleUIOnCorrectIngredient(type, nameToDisplay);
         }
 
-        private void HandleUIOnCorrectIngredient(Ingredient.IngredientType type, string displayName)
+        private void HandleUIOnCorrectIngredient(IngredientType type, string displayName)
         {
             bool isTutorial = TutorialManager.Instance != null && TutorialManager.Instance._isTutorialMode;
 
@@ -68,24 +79,30 @@ namespace CookOrPanic.CookingStationWithUI
         // --- OVERRIDE LOGIKA UI SAAT BAHAN SALAH ---
         protected override void ShowWrongVisualFeedback()
         {
-            // 1. Play Error Sound
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlaySFX("ErrorBahan");
-            }
-
             // 2. Animasi Popup "Bahan Salah"
             if (_wrongIngredientPopup != null)
             {
-                _wrongIngredientPopup.DOKill();
-                _wrongIngredientPopup.alpha = 0;
-                _wrongIngredientPopup.gameObject.SetActive(true);
+                UIAnimator.Show(_wrongIngredientPopup.gameObject, UIAnimator.AnimationType.PulseFade);
+                DOVirtual.DelayedCall(2.0f, () => { // 2 detik = durasi PulseFade + durasi tampil
+                    UIAnimator.Hide(_wrongIngredientPopup.gameObject, UIAnimator.AnimationType.Fade);
+                });
+            }
+        }
 
-                Sequence s = DOTween.Sequence();
-                s.Append(_wrongIngredientPopup.DOFade(1, 0.2f));
-                s.AppendInterval(1.5f);
-                s.Append(_wrongIngredientPopup.DOFade(0, 0.5f));
-                s.OnComplete(() => _wrongIngredientPopup.gameObject.SetActive(false));
+        protected override void ShowStoveWarning()
+        {
+            if (_warningOnStoveGas != null)
+            {
+                UIAnimator.Show(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.PulseFade);
+            }
+        }
+
+        // OVERRIDE untuk menyembunyikan warning
+        protected override void HideStoveWarning()
+        {
+            if (_warningOnStoveGas != null)
+            {
+                UIAnimator.Hide(_warningOnStoveGas.gameObject, UIAnimator.AnimationType.Fade);
             }
         }
 
@@ -104,7 +121,7 @@ namespace CookOrPanic.CookingStationWithUI
 
             // 3. Reset Panel Lock (khusus UI)
          
-            if (_isiPanelResep != null) _isiPanelResep.ResetPanelLock();
+            if (_panelRecipe != null) _panelRecipe.ResetPanelLock();
 
             Debug.Log("<color=cyan>UI Station Cleared.</color>");
         }

@@ -18,6 +18,7 @@ namespace CookOrPanic.Food
     public class Food : MonoBehaviour
     {
         public float _timeSpentCooking;
+        public float _targetCookTime; // Waktu saat makanan mencapai status Cooked (untuk referensi jika mau buat efek khusus saat matang)
         public FoodType _foodType;
         public FoodState _foodState;
         public Recipe _recipeOrigin;
@@ -46,11 +47,22 @@ namespace CookOrPanic.Food
 
         public void UpdateStateBasedOnTime(float duration)
         {
-            // LOGIKA SATU-SATUNYA YANG MENENTUKAN STATUS
-            if (duration < 6f) _foodState = FoodState.Raw;
-            else if (duration >= 6f && duration <= 8f) _foodState = FoodState.Cooked;
-            else _foodState = FoodState.OverCooked;
 
+            // LOGIKA SATU-SATUNYA YANG MENENTUKAN STATUS
+            if (_timeSpentCooking < _targetCookTime)
+            {
+                _foodState = FoodState.Raw;
+            }
+            // 2. MATANG: Waktu masak sudah lewat target, tapi belum lewat batas toleransi (2 detik)
+            else if (_timeSpentCooking >= _targetCookTime && _timeSpentCooking <= _targetCookTime + 2f)
+            {
+                _foodState = FoodState.Cooked;
+            }
+            // 3. GOSONG: Waktu masak sudah lebih dari (target + 2 detik)
+            else
+            {
+                _foodState = FoodState.OverCooked;
+            }
             ApplyVisualStateToChildren();
 
             Debug.Log($"[Food] Status {this.name} sekarang: {_foodState} (Waktu: {duration}s)");

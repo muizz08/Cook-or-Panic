@@ -1,14 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+using UnityEngine.Video;
 
 namespace CookOrPanic.Panel
 {
-    using CookOrPanic.TutorialManager;
     using CookOrPanic.AudioManager;
+    using CookOrPanic.TutorialManager;
     using CookOrPanic.UIAnimator;
 
     public class Panel : MonoBehaviour
@@ -19,14 +20,17 @@ namespace CookOrPanic.Panel
             PanelKlikPanduan,
             PanelResep,
             PanelKlikResep,
-            PanelTriggerLanjut
-         
+            PanelTriggerLanjut,
+            PanelVideo // 🔥 tambahan
+
         }
         public static Action OnAnyRecipePanelOpened;
         private static Dictionary<PanelType, Panel> _panelRegistry = new Dictionary<PanelType, Panel>();
 
         public PanelType _panelType;
         public Image _panelImage;
+
+        [SerializeField] private VideoPlayer _videoPlayer;
 
         [Header("Navigation Settings")]
         public RectTransform _contentRect;
@@ -42,7 +46,7 @@ namespace CookOrPanic.Panel
         float _lastClickTime;
 
         [Header("Timer Trigger Settings")]
-      
+
         private float _pageWidth;
 
         private void Start()
@@ -51,6 +55,12 @@ namespace CookOrPanic.Panel
             {
                 // Ambil lebar dari page asli, bukan viewport
                 _pageWidth = ((RectTransform)_contentRect.GetChild(0)).rect.width;
+            }
+            if (_panelType == PanelType.PanelVideo && _videoPlayer != null)
+            {
+                // Matikan Play On Awake di Inspector agar tidak tabrakan dengan script
+                _videoPlayer.playOnAwake = false;
+                StartCoroutine(PlayVideoWithDelay(2f));
             }
         }
 
@@ -101,6 +111,7 @@ namespace CookOrPanic.Panel
 
         public void ShowPanel()
         {
+         
             if (_panelImage == null) return;
             _currentPage = 0;
 
@@ -133,6 +144,24 @@ namespace CookOrPanic.Panel
                     FindObjectOfType<CanvasManager.CanvasManager>()?.StartPanelTimer(15f);
                 }
             }
+        }
+
+
+
+        private void OnVideoFinished(VideoPlayer vp)
+        {
+            Debug.Log("VIDEO SELESAI!");
+            if (_panelType == PanelType.PanelVideo)
+            {
+                if (_videoPlayer != null)
+                {
+                    _videoPlayer.loopPointReached -= OnVideoFinished;
+                    _videoPlayer.Stop();
+                }
+                UIAnimator.Hide(_videoPlayer.gameObject, UIAnimator.AnimationType.Scale);
+             
+            }
+           
         }
 
         public void ForceLockPanel()
@@ -193,6 +222,8 @@ namespace CookOrPanic.Panel
                 }
             }
 
+          
+
             // --- LOGIKA UNTUK MEMATIKAN TIMER DI CANVAS ---
             if (_panelType == PanelType.PanelResep)
             {
@@ -238,7 +269,7 @@ namespace CookOrPanic.Panel
             yield return null; // tunggu 1 frame
             UpdatePanelPosition();
         }
-      
+
         private void UpdatePanelPosition()
         {
             if (_contentRect == null || !_contentRect.gameObject.activeInHierarchy)
@@ -252,7 +283,28 @@ namespace CookOrPanic.Panel
             _contentRect.DOAnchorPosX(targetX, 0.5f).SetEase(Ease.OutQuad);
         }
 
-       
+        private IEnumerator PlayVideoWithDelay(float delay)
+        {
+            Debug.Log($"<color=cyan>Menunggu {delay} detik sebelum memutar video...</color>");
+
+            // Pastikan event sudah terpasang
+            _videoPlayer.loopPointReached -= OnVideoFinished;
+            _videoPlayer.loopPointReached += OnVideoFinished;
+
+            // Siapkan video di background (agar saat delay selesai, video langsung muncul)
+            if (!_videoPlayer.isPrepared)
+            {
+                _videoPlayer.Prepare();
+            }
+
+            // Tunggu selama waktu yang ditentukan
+            yield return new WaitForSeconds(delay);
+
+            // Putar video
+            Debug.Log("<color=green>Delay selesai, memutar video sekarang.</color>");
+            _videoPlayer.Play();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (_panelType == PanelType.PanelTriggerLanjut && other.CompareTag("Player"))

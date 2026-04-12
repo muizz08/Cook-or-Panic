@@ -5,6 +5,7 @@ using System.Collections;
 namespace CookOrPanic.HeadChef
 {
     using UnityEngine;
+    using CookOrPanic.AudioManager; 
 
     public class HeadChef : MonoBehaviour
     {
@@ -118,6 +119,7 @@ namespace CookOrPanic.HeadChef
         void UpdateAnimation()
         {
             bool isWalking = _agent.velocity.magnitude > 0.1f;
+            AudioManager.Instance.PlaySFX("Step");
             _animator.SetBool("isWalking", isWalking);
         }
 

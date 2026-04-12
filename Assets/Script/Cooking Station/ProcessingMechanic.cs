@@ -30,6 +30,7 @@ namespace CookOrPanic.ProcessingMechanic
         [SerializeField] private GameObject _cleanButtonCanvas;
         [SerializeField] private List<Transform> _plateRackSlots = new List<Transform>();
         [SerializeField] private Transform _wastafelSpawnPoint;
+        [SerializeField] private ParticleSystem _foam;
 
         [Header("Dirty Plate")]
         [SerializeField] private bool _isTutorialMode = false; // Centang ini khusus di scene tutorial
@@ -37,15 +38,13 @@ namespace CookOrPanic.ProcessingMechanic
         [SerializeField] private int _tutorialCapacity = 1;
         private int _kapasitasWastafel;
 
-        [Header("Audio References")]
-        //[SerializeField] private AudioSource _grindingAudioSource; // Drag Audio Source Mesin Giling ke sini
-        [SerializeField] private AudioSource _washingAudioSource;  // Drag Audio Source Air/Wastafel ke sini
 
         [Header("Grinder Settings")]
         private bool _isGrinding = false; // Status mesin
 
         private void Start()
         {
+            _foam.Stop();
             // Tentukan kapasitas berdasarkan mode
             _kapasitasWastafel = _isTutorialMode ? _tutorialCapacity : _mainSceneCapacity;
 
@@ -53,11 +52,13 @@ namespace CookOrPanic.ProcessingMechanic
             _piringDiWastafel = 0;
             _nextSlotIndex = 0;
 
+
             if (_socket != null)
             {
                 _socket.OnObjectEntered += HandleObjectEntered;
                 _socket.OnObjectRemoved += HandleObjectRemoved;
             }
+
         }
         private void OnDestroy()
         {
@@ -90,7 +91,7 @@ namespace CookOrPanic.ProcessingMechanic
             {
                 StartCoroutine(GrindingProcess());
 
-            
+
             }
             else
             {
@@ -174,85 +175,58 @@ namespace CookOrPanic.ProcessingMechanic
 
         public void SpawnDirtyPlate(GameObject nampanObj)
         {
-            if (_wastafelSpawnPoint == null)
-            {
-                Debug.LogError("Wastafel Spawn Point belum diisi di Inspector!");
-                return;
-            }
+            if (_wastafelSpawnPoint == null) return;
 
-            // 1. Cari socket piring di atas nampan
             XRSocketInteractor socketNampan = nampanObj.GetComponentInChildren<XRSocketInteractor>(true);
 
             if (socketNampan != null && socketNampan.hasSelection)
             {
-                // 2. Ambil referensi GameObject piringnya
                 IXRSelectInteractable plateInteractable = socketNampan.GetOldestInteractableSelected();
                 GameObject plateObj = plateInteractable.transform.gameObject;
 
+                // 1. Hancurkan makanan (Pastikan ini beres dulu)
                 var plateScript = plateObj.GetComponent<Plate>();
+                if (plateScript != null) plateScript.DestroyFoodInSocket();
 
-                if (plateScript != null)
-                {
-                    // 4. SURUH PIRING HAPUS MAKANANNYA (Pakai fungsi di Plate.cs tadi)
-                    plateScript.DestroyFoodInSocket();
-                    Debug.Log("<color=cyan>Mechanic:</color> Meminta Plate menghancurkan makanan.");
-                }
-
-                // Lepaskan piring dari nampan secara resmi di sistem XR
+                // 2. Lepas dari nampan secara paksa
                 socketNampan.interactionManager.SelectExit(socketNampan, plateInteractable);
                 plateObj.transform.SetParent(null);
 
-                // 3. DETEKSI FOOD DI SOCKET PIRING
-                // Cari socket yang menempel pada piring (bukan nampan)
-                XRSocketInteractor socketPiring = plateObj.GetComponentInChildren<XRSocketInteractor>(true);
-
-                // 4. Proses Teleportasi Piring
-                plateObj.SetActive(false); // Matikan agar perpindahan posisi bersih
-
-                plateObj.transform.position = _wastafelSpawnPoint.position;
-                plateObj.transform.rotation = _wastafelSpawnPoint.rotation;
-
-                if (!_piringDiWastafelList.Contains(plateObj))
-                {
-                    _piringDiWastafelList.Add(plateObj);
-                }
-
-                // 5. Reset Physics
+                // --- SOLUSI AGAR TIDAK MENTAL ---
                 Rigidbody plateRb = plateObj.GetComponent<Rigidbody>();
                 if (plateRb != null)
                 {
-                    plateRb.isKinematic = false;
+                    plateRb.isKinematic = true; // Matikan fisika sementara agar tidak bentrok saat pindah
                     plateRb.velocity = Vector3.zero;
                     plateRb.angularVelocity = Vector3.zero;
                 }
 
-                // 6. Kembalikan Layer agar bisa diambil lagi
-                if (plateObj.TryGetComponent(out XRGrabInteractable grab))
+                // 3. Pindahkan posisi
+                plateObj.transform.position = _wastafelSpawnPoint.position;
+                plateObj.transform.rotation = _wastafelSpawnPoint.rotation;
+
+                // 4. Nyalakan lagi fisikanya setelah posisi aman
+                if (plateRb != null)
                 {
-                    grab.interactionLayers = InteractionLayerMask.GetMask("Default");
+                    plateRb.isKinematic = false;
+                    plateRb.useGravity = true;
                 }
 
-                plateObj.SetActive(true);
-                Debug.Log("<color=green>Mechanic:</color> Piring bersih dipindah ke wastafel.");
-            }
-            else
-            {
-                Debug.LogWarning("<color=yellow>Mechanic:</color> Tidak ada piring yang terdeteksi di nampan!");
-            }
-            _piringDiWastafel++; // Ini akan menambah counter
+                if (!_piringDiWastafelList.Contains(plateObj))
+                {
+                    _piringDiWastafelList.Add(plateObj);
+                    _piringDiWastafel++; // Nambah HANYA jika piring berhasil masuk list
+                }
 
-            // Gunakan variabel kapasitas yang sudah ditentukan di Start()
+                Debug.Log($"<color=green>Piring Masuk:</color> {_piringDiWastafel}/{_kapasitasWastafel}");
+            }
+
+            // 5. Munculkan tombol jika sudah penuh
             if (_piringDiWastafel >= _kapasitasWastafel)
             {
                 _cleanButtonCanvas.SetActive(true);
-                Debug.Log($"<color=yellow>Wastafel Penuh!</color> ({_piringDiWastafel}/{_kapasitasWastafel}) Tombol cuci muncul.");
-            }
-            else
-            {
-                Debug.Log($"Piring di wastafel: {_piringDiWastafel}/{_kapasitasWastafel}. Belum penuh.");
             }
         }
-
         //piring
         public void CleanAndReturnToRack()
         {
@@ -266,12 +240,14 @@ namespace CookOrPanic.ProcessingMechanic
 
         private IEnumerator WashingSequence()
         {
-            if (_washingAudioSource != null)
+            _foam.Play();
+            if (AudioManager.Instance != null)
             {
-                _washingAudioSource.Play();
-                yield return new WaitForSeconds(_washingAudioSource.clip.length);
+                AudioManager.Instance.PlaySFX("MencuciAudio");
             }
+            yield return new WaitForSeconds(2.0f);
 
+            _foam.Stop();
             if (_piringDiWastafelList.Count > 0)
             {
                 GameObject plateToTeleport = _piringDiWastafelList[0];

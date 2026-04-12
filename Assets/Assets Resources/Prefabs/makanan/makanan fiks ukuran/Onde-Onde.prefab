@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _timeSpentCooking: 0
+  _targetCookTime: 6
   _foodType: 0
   _foodState: 0
   _recipeOrigin: {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}

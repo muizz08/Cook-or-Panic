@@ -5,75 +5,91 @@ namespace CookOrPanic.Timer
 {
     public class Timer : MonoBehaviour
     {
-        public enum TimerMode { CountUp, CountDown }
+        // Variabel Data
+        private float _cookTime, _orderTime, _bookTime;
+        private float _maxOrder, _maxBook;
 
-        private float _currentTime;
-        private float _maxTime;
-        public bool _isRunning;
-        private TimerMode _currentMode;
+        // Status Jalannya Timer
+        private bool _isCookRunning, _isOrderRunning, _isBookRunning;
 
-        // Event yang terpanggil saat waktu habis (khusus CountDown)
-        public Action OnTimerFinished;
+        // Event Finish
+        public Action OnOrderFinished;
+        public Action OnBookFinished;
 
-        public void StartTimer(float duration, TimerMode mode = TimerMode.CountUp)
+        // Tambahkan ini agar script lain (seperti CookingStation) bisa ngecek status timer
+        public bool IsCookRunning()
         {
-            _currentMode = mode;
-            _maxTime = duration;
-            _isRunning = true;
-
-            if (_currentMode == TimerMode.CountDown)
-            {
-                _currentTime = duration; // Mulai dari angka besar ke 0
-            }
-            else
-            {
-                _currentTime = 0; // Mulai dari 0 ke atas (untuk masak)
-            }
-
-            Debug.Log($"Timer {mode} started! Duration: {duration}");
+            return _isCookRunning;
         }
 
-        public void TimerCooking(float deltaTime)
+        private void Update()
         {
-            if (!_isRunning) return;
+            float delta = Time.deltaTime;
 
-            if (_currentMode != TimerMode.CountUp) return;
+            if (_isCookRunning) _cookTime += delta;
 
-            _currentTime += deltaTime;
-
-            if (_currentTime >= _maxTime)
+            if (_isOrderRunning)
             {
-                _currentTime = _maxTime;
-                _isRunning = false;
+                _orderTime -= delta;
+                if (_orderTime <= 0)
+                {
+                    _orderTime = 0;
+                    StopOrderTimer(); // Mematikan status running
+                    OnOrderFinished?.Invoke();
+                }
             }
-        }
 
-        public void TimerBook(float deltaTime)
-        {
-            if (!_isRunning) return;
-
-            if (_currentMode != TimerMode.CountDown) return;
-
-            _currentTime -= deltaTime;
-
-            if (_currentTime <= 0)
+            if (_isBookRunning)
             {
-                _currentTime = 0;
-                _isRunning = false;
-                OnTimerFinished?.Invoke();
-                Debug.Log("Timer Buku Habis!");
+                _bookTime -= delta;
+                if (_bookTime <= 0)
+                {
+                    _bookTime = 0;
+                    StopBookTimer(); // Mematikan status running
+                    OnBookFinished?.Invoke();
+                }
             }
         }
 
+        // --- 1. FUNGSI MASAK (Count Up) ---
+        public void StartCookingTimer() 
+        { 
+            _isCookRunning = true;
+        }
+        public void StopCookingTimer() => _isCookRunning = false;
+        public float GetCookTime() => _cookTime;
 
-        public float GetCurrentTime() => _currentTime;
-
-        // Helper untuk UI agar gampang menampilkan format 00:00
-        public float GetTimeNormalized() => _maxTime > 0 ? _currentTime / _maxTime : 0;
-
-        public void StopTimer()
+        // --- 2. FUNGSI PESANAN (Count Down) ---
+        public void StartOrderTimer(float duration)
         {
-            _isRunning = false;
+            _maxOrder = duration;
+            _orderTime = duration;
+            _isOrderRunning = true;
+        }
+        public void StopOrderTimer() => _isOrderRunning = false;
+        public float GetOrderRatio() => _maxOrder > 0 ? _orderTime / _maxOrder : 0;
+
+        // --- 3. FUNGSI BUKU (Count Down) ---
+        public void StartBookTimer(float duration)
+        {
+            _maxBook = duration;
+            _bookTime = duration;
+            _isBookRunning = true;
+        }
+        public void StopBookTimer() => _isBookRunning = false;
+        public float GetBookRatio() => _maxBook > 0 ? _bookTime / _maxBook : 0;
+        // Tambahkan ini di Timer.cs
+        public bool IsBookRunning() => _isBookRunning;
+
+        public float GetBookTimeRemaining() => _bookTime;
+
+
+
+        // --- TAMBAHAN: RESET SEMUA ---
+        public void ResetAllTimers()
+        {
+            _isCookRunning = _isOrderRunning = _isBookRunning = false;
+            _cookTime = _orderTime = _bookTime = 0;
         }
     }
 }

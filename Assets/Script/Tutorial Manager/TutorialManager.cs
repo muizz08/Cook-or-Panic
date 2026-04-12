@@ -96,7 +96,7 @@ namespace CookOrPanic.TutorialManager
 
         private void Start()
         {
-
+            CookingStation.CookingStation.OnSeasoningAdded += HandleSeasoningPlaced;
             // Panggil UpdateStepUI di awal agar tampilan sinkron dengan step 'Panduan'
             UpdateStepUI();
             if (_foodSocket != null)
@@ -155,6 +155,45 @@ namespace CookOrPanic.TutorialManager
 
         }
 
+        public void HandleSeasoningPlaced(IngredientType seasoningType)
+        {
+            if (currentStep != TutorialStep.AmbilBahan) return;
+
+            // Logika centangnya sama dengan HandleFoodPlaced
+            UpdateChecklist(seasoningType);
+        }
+
+
+        // Rekomendasi: Bungkus logika centang agar bisa dipakai bersama
+        private void UpdateChecklist(IngredientType incomingType)
+        {
+            if (_panelCheckList != null && !_panelCheckList.activeSelf)
+            {
+                UIAnimator.Show(_panelCheckList, UIAnimator.AnimationType.Scale);
+            }
+            bool allIngredientsNowDone = true;
+
+            foreach (IngredientUI item in ingredientChecklist)
+            {
+                if (item.ingredientType == incomingType)
+                {
+                    item.isCollected = true;
+                    if (item.checkmark != null)
+                    {
+                        item.checkmark.SetActive(true);
+                        item.checkmark.transform.localScale = Vector3.zero;
+                        item.checkmark.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+                    }
+                }
+                if (!item.isCollected) allIngredientsNowDone = false;
+            }
+
+            if (allIngredientsNowDone)
+            {
+                UIAnimator.Hide(_panelCheckList, UIAnimator.AnimationType.Scale);
+            }
+        }
+
         // Fungsi yang dipanggil saat buku/panel dibuka
         public void OnBookOpened(Panel.PanelType type)
         {
@@ -176,7 +215,6 @@ namespace CookOrPanic.TutorialManager
         {
             if (currentStep == TutorialStep.AmbilBahan)
             {
-                UIAnimator.Show(_panelCheckList, UIAnimator.AnimationType.Scale);
                 UIAnimator.Show(_instruksiAmbilBahan, UIAnimator.AnimationType.Scale);
             }
         }
@@ -201,42 +239,8 @@ namespace CookOrPanic.TutorialManager
 
             IngredientType incomingType = ingredient.ingredientType;
 
-            // 1. Reset status lengkap ke true sebelum pengecekan
-            bool allIngredientsNowDone = true;
-
-            // 2. Loop Checklist
-            foreach (IngredientUI item in ingredientChecklist)
-            {
-                if (item.ingredientType == incomingType)
-                {
-                    item.isCollected = true;
-                    if (item.checkmark != null)
-                    {
-                        item.checkmark.SetActive(true);
-                        item.checkmark.transform.localScale = Vector3.zero;
-                        item.checkmark.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
-                    }
-                }
-                // Jika ada satu saja yang belum terkumpul, tandai belum lengkap
-                if (item.isCollected == false)
-                {
-                    allIngredientsNowDone = false;
-                }
-                
-            }
-
-            // 3. LOGIKA UTAMA: Matikan Panel Checklist HANYA jika semua sudah terkumpul
-            // Ini akan sinkron dengan munculnya tombol di CookingStation
-            if (allIngredientsNowDone)
-            {
-                if (_panelCheckList != null)
-                {
-                    UIAnimator.Hide(_panelCheckList, UIAnimator.AnimationType.Scale);
-                }
-              
-
-                Debug.Log("<color=cyan>Tutorial:</color> Checklist selesai dan disembunyikan.");
-            }
+            UpdateChecklist(ingredient.ingredientType);
+           
         }
 
         // Tambahkan fungsi ini di dalam class TutorialManager

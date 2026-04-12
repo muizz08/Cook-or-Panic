@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 501dfcee4d0908b439ef5d5242296a50, type: 3}
   m_Name: Level 3
   m_EditorClassIdentifier: 
+  _levelName: Sous Chef
+  _levelPreviewImage: {fileID: 21300000, guid: 70478f274f94ffe4e95bfa333a52e6eb, type: 3}
   _availableRecipes:
   - {fileID: 11400000, guid: f946b430b2cc9e04a8a9cf635ff0994b, type: 2}
   - {fileID: 11400000, guid: 3e9385b8f43ff5843a99ea4e7696afdd, type: 2}
