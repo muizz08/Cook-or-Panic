@@ -107,7 +107,11 @@ namespace CookOrPanic.OrderWindowController
 
             // Gunakan interactor dari socket secara langsung
             XRSocketInteractor windowSocket = _windowSocket.Socket;
-           
+
+            if (TutorialManager.Instance != null)
+            {
+                TutorialManager.Instance.OnBellPressedDuringTutorial();
+            }
 
             // Coba ambil objek tertua yang sedang berinteraksi
             IXRSelectInteractable trayInteractable = windowSocket.GetOldestInteractableSelected();

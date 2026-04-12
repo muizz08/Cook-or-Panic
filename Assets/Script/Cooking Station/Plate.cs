@@ -44,19 +44,26 @@ namespace CookOrPanic.Plate
         // Di dalam Plate.cs
         public void DestroyFoodInSocket()
         {
-            // Cek apakah ada yang nempel di socket piring
+            // 1. Cek lewat Socket dulu
             if (_socket != null && _socket.hasSelection)
             {
-                // Ambil makanan yang sedang nempel
                 IXRSelectInteractable foodInteractable = _socket.GetOldestInteractableSelected();
                 GameObject foodObj = foodInteractable.transform.gameObject;
 
-                Debug.Log($"<color=red>Plate:</color> Menghancurkan {foodObj.name} dari socket.");
-
-                // WAJIB: Lepas dari socket secara resmi sebelum dihancurkan
                 _socket.interactionManager.SelectExit(_socket, foodInteractable);
-
                 Destroy(foodObj);
+                Debug.Log("<color=red>Plate:</color> Makanan dihancurkan via Socket.");
+            }
+            else
+            {
+                // 2. BACKUP: Jika socket meleset (karena SetParent), kita cari manual di child
+                // Cari semua objek yang punya script Food di bawah piring ini
+                Food foodInChild = GetComponentInChildren<Food>();
+                if (foodInChild != null)
+                {
+                    Destroy(foodInChild.gameObject);
+                    Debug.Log("<color=red>Plate:</color> Makanan dihancurkan via Child Search (Fallback).");
+                }
             }
         }
 

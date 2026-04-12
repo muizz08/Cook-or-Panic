@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -134,7 +134,28 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Element cook or panic (7) 1 (1)_3
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 20
+        width: 2721
+        height: 2211
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 201967dfb63a56342b4e5877372cc268
+      internalID: -1291360848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -145,7 +166,21 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Element cook or panic (7) 1 (1)_0: -123732104
+      Element cook or panic (7) 1 (1)_1: 2014760291
+      Element cook or panic (7) 1 (1)_10: -922051617
+      Element cook or panic (7) 1 (1)_11: 1659720671
+      Element cook or panic (7) 1 (1)_12: 20946168
+      Element cook or panic (7) 1 (1)_13: -2129385341
+      Element cook or panic (7) 1 (1)_2: -1503950723
+      Element cook or panic (7) 1 (1)_3: -1291360848
+      Element cook or panic (7) 1 (1)_4: -695734115
+      Element cook or panic (7) 1 (1)_5: -2053956205
+      Element cook or panic (7) 1 (1)_6: -1444115932
+      Element cook or panic (7) 1 (1)_7: 688621135
+      Element cook or panic (7) 1 (1)_8: -484673628
+      Element cook or panic (7) 1 (1)_9: 1962153339
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

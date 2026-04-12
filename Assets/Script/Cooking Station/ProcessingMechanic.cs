@@ -183,50 +183,66 @@ namespace CookOrPanic.ProcessingMechanic
             {
                 IXRSelectInteractable plateInteractable = socketNampan.GetOldestInteractableSelected();
                 GameObject plateObj = plateInteractable.transform.gameObject;
+                Rigidbody plateRb = plateObj.GetComponent<Rigidbody>();
 
-                // 1. Hancurkan makanan (Pastikan ini beres dulu)
-                var plateScript = plateObj.GetComponent<Plate>();
-                if (plateScript != null) plateScript.DestroyFoodInSocket();
+                // 1. CARI FOOD DI SOCKET PIRING SECARA MANUAL (Metode paling aman)
+                XRSocketInteractor socketPiring = plateObj.GetComponentInChildren<XRSocketInteractor>(true);
+                if (socketPiring != null && socketPiring.hasSelection)
+                {
+                    // Ambil makanannya
+                    GameObject foodObj = socketPiring.GetOldestInteractableSelected().transform.gameObject;
 
-                // 2. Lepas dari nampan secara paksa
+                    // Hapus paksa SEKARANG juga
+                    Destroy(foodObj);
+                    Debug.Log("<color=red>Mechanic:</color> Food dipaksa hancur sebelum teleport.");
+                }
+                else
+                {
+                    // Jika socket manual gak ketemu, baru panggil script Plate
+                    var plateScript = plateObj.GetComponent<Plate>();
+                    if (plateScript != null) plateScript.DestroyFoodInSocket();
+                }
+
+                // 2. Lepaskan piring dari nampan
                 socketNampan.interactionManager.SelectExit(socketNampan, plateInteractable);
                 plateObj.transform.SetParent(null);
 
-                // --- SOLUSI AGAR TIDAK MENTAL ---
-                Rigidbody plateRb = plateObj.GetComponent<Rigidbody>();
-                if (plateRb != null)
-                {
-                    plateRb.isKinematic = true; // Matikan fisika sementara agar tidak bentrok saat pindah
-                    plateRb.velocity = Vector3.zero;
-                    plateRb.angularVelocity = Vector3.zero;
-                }
-
-                // 3. Pindahkan posisi
+                // 3. TELEPORTASI
+                // JANGAN langsung SetActive(false). Kita pindahkan posisinya dulu.
                 plateObj.transform.position = _wastafelSpawnPoint.position;
                 plateObj.transform.rotation = _wastafelSpawnPoint.rotation;
-
-                // 4. Nyalakan lagi fisikanya setelah posisi aman
-                if (plateRb != null)
-                {
-                    plateRb.isKinematic = false;
-                    plateRb.useGravity = true;
-                }
 
                 if (!_piringDiWastafelList.Contains(plateObj))
                 {
                     _piringDiWastafelList.Add(plateObj);
-                    _piringDiWastafel++; // Nambah HANYA jika piring berhasil masuk list
+                    _piringDiWastafel++; // Counter nambah di sini supaya akurat
                 }
 
-                Debug.Log($"<color=green>Piring Masuk:</color> {_piringDiWastafel}/{_kapasitasWastafel}");
+                // 4. Reset Physics agar tidak mental
+                
+                if (plateRb != null)
+                {
+                    plateRb.isKinematic = false;
+                    plateRb.velocity = Vector3.zero;
+                    plateRb.angularVelocity = Vector3.zero;
+                }
+
+                // 5. Update Interaction Layer
+                if (plateObj.TryGetComponent(out XRGrabInteractable grab))
+                {
+                    grab.interactionLayers = InteractionLayerMask.GetMask("Default");
+                }
+
+                Debug.Log("<color=green>Mechanic:</color> Piring pindah ke wastafel.");
             }
 
-            // 5. Munculkan tombol jika sudah penuh
+            // 6. Cek Kapasitas
             if (_piringDiWastafel >= _kapasitasWastafel)
             {
                 _cleanButtonCanvas.SetActive(true);
             }
         }
+
         //piring
         public void CleanAndReturnToRack()
         {

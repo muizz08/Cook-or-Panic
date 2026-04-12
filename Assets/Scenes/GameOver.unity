@@ -28064,7 +28064,7 @@ GameObject:
   - component: {fileID: 910446494}
   m_Layer: 8
   m_Name: Fade Scene
-  m_TagString: Untagged
+  m_TagString: Fader
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49280,10 +49280,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faderGroup: {fileID: 910446494}
-  fadeSpeed: 0.5
+  fadeDuration: 0.5
   mainMenu:
-    sceneAsset: {fileID: 0}
-    sceneName: 
+    sceneAsset: {fileID: 102900000, guid: c4f86a26f8a8b5c46a899b37c5f723c7, type: 3}
+    sceneName: MainMenu
   Tutorial:
     sceneAsset: {fileID: 102900000, guid: b466c1a6f823ce94dbf51de6126f5335, type: 3}
     sceneName: TutorialScene
@@ -49291,8 +49291,11 @@ MonoBehaviour:
     sceneAsset: {fileID: 102900000, guid: 6adcb78bc34ef7449b8828395bb2522e, type: 3}
     sceneName: MainScene
   gameOver:
-    sceneAsset: {fileID: 0}
-    sceneName: 
+    sceneAsset: {fileID: 102900000, guid: cefeace608bb8e74591633863bbec410, type: 3}
+    sceneName: GameOver
+  winner:
+    sceneAsset: {fileID: 102900000, guid: e8bc428343119da438727e6ebf2912b3, type: 3}
+    sceneName: Winner
 --- !u!4 &1677718868
 Transform:
   m_ObjectHideFlags: 0

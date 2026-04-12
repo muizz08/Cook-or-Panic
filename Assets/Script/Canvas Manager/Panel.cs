@@ -151,6 +151,7 @@ namespace CookOrPanic.Panel
         private void OnVideoFinished(VideoPlayer vp)
         {
             Debug.Log("VIDEO SELESAI!");
+
             if (_panelType == PanelType.PanelVideo)
             {
                 if (_videoPlayer != null)
@@ -158,10 +159,12 @@ namespace CookOrPanic.Panel
                     _videoPlayer.loopPointReached -= OnVideoFinished;
                     _videoPlayer.Stop();
                 }
+
                 UIAnimator.Hide(_videoPlayer.gameObject, UIAnimator.AnimationType.Scale);
-             
+
+                // 🔥 AUTO CLOSE PANEL
+                HidePanel();
             }
-           
         }
 
         public void ForceLockPanel()
@@ -311,6 +314,28 @@ namespace CookOrPanic.Panel
             {
                 ShowPanel();
             }
+        }
+
+        public void SkipVideo()
+        {
+            if (_panelType != PanelType.PanelVideo) return;
+
+            if (_videoPlayer != null)
+            {
+                _videoPlayer.loopPointReached -= OnVideoFinished;
+                _videoPlayer.Stop();
+            }
+
+            // Sembunyikan video
+            if (_videoPlayer != null)
+            {
+                UIAnimator.Hide(_videoPlayer.gameObject, UIAnimator.AnimationType.Scale);
+            }
+
+            // 🔥 Tutup panel utama juga
+            HidePanel();
+
+            Debug.Log("<color=yellow>Video di-skip!</color>");
         }
     }
 }
