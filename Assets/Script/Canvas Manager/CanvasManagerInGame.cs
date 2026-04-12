@@ -203,7 +203,7 @@ namespace CookOrPanic.CanvasManagerInGame
                 }
                 else
                 {
-                    _TimerPesanan.color = Color.black;
+                    _TimerPesanan.color = Color.white;
                 }
 
                 // --- LOGIKA SUARA: Hanya bunyi jika detik berganti ---

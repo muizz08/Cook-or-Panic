@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -136,27 +136,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Element 1_0
-      rect:
-        serializedVersion: 2
-        x: 2152
-        y: 2618
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b7b403abda4f44048b83e7937bd27df9
-      internalID: -75449699
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Element 1_1
       rect:
         serializedVersion: 2
@@ -165,7 +144,7 @@ TextureImporter:
         width: 3289
         height: 2478
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -173,153 +152,6 @@ TextureImporter:
       bones: []
       spriteID: dc2732b1b3a26ac43beb4dfdb2994c76
       internalID: -222064658
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_2
-      rect:
-        serializedVersion: 2
-        x: 741
-        y: 2608
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7abb384e04c7175418f5cf12c8c5f452
-      internalID: 928446698
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_3
-      rect:
-        serializedVersion: 2
-        x: 1695
-        y: 2608
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3d6d13bda7a7c704baf48e93c1bc1a39
-      internalID: 655730374
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_4
-      rect:
-        serializedVersion: 2
-        x: 2679
-        y: 2608
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9c315a4640519824189a43c1e1e13fa1
-      internalID: 1281147090
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_5
-      rect:
-        serializedVersion: 2
-        x: 2710
-        y: 2608
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 73214b1de2bd15e4e8873cf21f2575b5
-      internalID: -504585710
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_6
-      rect:
-        serializedVersion: 2
-        x: 3349
-        y: 426
-        width: 30
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: eff55d2d825f1994c9d2928326264774
-      internalID: 1104735616
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_7
-      rect:
-        serializedVersion: 2
-        x: 386
-        y: 112
-        width: 10
-        height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c5d5a89a1c08786459eb292769322702
-      internalID: -1464532870
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Element 1_8
-      rect:
-        serializedVersion: 2
-        x: 3065
-        y: 122
-        width: 10
-        height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ad5cb135cd52a1b44b09829338d1b4e0
-      internalID: -2006128551
       vertices: []
       indices: 
       edges: []

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 namespace CookOrPanic.GameSceneManager
 {
     public class GameSceneManager : MonoBehaviour
@@ -11,24 +10,26 @@ namespace CookOrPanic.GameSceneManager
 
         [Header("Fade Settings")]
         [SerializeField] private CanvasGroup faderGroup;
-        [SerializeField] private float fadeSpeed = 1.5f;
+        [SerializeField] private float fadeDuration = 0.5f;
+
+        private Coroutine currentFade;
 
         [Header("Scenes")]
         public SceneReference mainMenu;
         public SceneReference Tutorial;
         public SceneReference gameplay;
         public SceneReference gameOver;
+        public SceneReference winner;
 
         private void Awake()
         {
-           
-            transform.SetParent(null);
+
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
 
-                SceneManager.sceneLoaded += OnSceneLoaded; // 🔥 TAMBAH INI
+                SceneManager.sceneLoaded += OnSceneLoaded;
             }
             else
             {
@@ -36,7 +37,17 @@ namespace CookOrPanic.GameSceneManager
             }
         }
 
+        private void Start()
+        {
+            // 🔥 Saat game pertama kali mulai → fade dari hitam ke clear
+            if (faderGroup != null)
+            {
+                faderGroup.alpha = 1;
+                currentFade = StartCoroutine(Fade(0));
+            }
+        }
 
+        // ================= LOAD SCENE =================
         public void LoadScene(SceneReference scene)
         {
             if (scene == null)
@@ -48,45 +59,21 @@ namespace CookOrPanic.GameSceneManager
             StartCoroutine(FadeOutAndLoad(scene.SceneName));
         }
 
-        public void LoadMainMenu()
-        {
-            LoadScene(mainMenu);
-        }
+        public void LoadMainMenu() => LoadScene(mainMenu);
+        public void LoadTutorial() => LoadScene(Tutorial);
+        public void LoadGameplay() => LoadScene(gameplay);
+        public void LoadGameOver() => LoadScene(gameOver);
+        public void LoadGameWinner() => LoadScene(winner);
 
-        public void LoadTutorial()
-        {
-            LoadScene(Tutorial);
-        }
-
-        public void LoadGameplay()
-        {
-            LoadScene(gameplay);
-        }
-
-        public void LoadGameOver()
-        {
-            LoadScene(gameOver);
-        }
-
+        // ================= ON SCENE LOADED =================
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // 🔥 RE-GET fader kalau hilang
-            if (faderGroup == null)
-            {
-                faderGroup = FindObjectOfType<CanvasGroup>();
-            }
 
-            if (faderGroup == null)
-            {
-                Debug.LogError("FaderGroup tidak ditemukan di scene!");
-                return;
-            }
+            // 🔥 Fade dari hitam ke normal
+            if (currentFade != null)
+                StopCoroutine(currentFade);
 
-            faderGroup.alpha = 1;
-            faderGroup.blocksRaycasts = true;
-
-            StartCoroutine(Fade(0));
-            Debug.Log("Fader: " + (faderGroup == null ? "NULL" : "ADA"));
+            currentFade = StartCoroutine(Fade(0));
         }
 
         // ================= FADE SYSTEM =================
@@ -94,73 +81,66 @@ namespace CookOrPanic.GameSceneManager
         {
             yield return StartCoroutine(Fade(1));
 
-            // 🔥 FIX ERROR DOTWEEN
+            // 🔥 MATIKAN SEMUA TWEEN
             DG.Tweening.DOTween.KillAll();
 
-            SceneManager.LoadScene(sceneName);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
         }
 
         private IEnumerator Fade(float targetAlpha)
         {
-            if (faderGroup == null) yield break;
+            if (faderGroup == null)
+                yield break;
 
-            float timer = 0f;
+            float startAlpha = faderGroup.alpha;
+            float time = 0f;
 
-            while (!Mathf.Approximately(faderGroup.alpha, targetAlpha))
+            while (time < fadeDuration)
             {
-                faderGroup.alpha = Mathf.MoveTowards(
-                    faderGroup.alpha,
-                    targetAlpha,
-                    fadeSpeed * Time.deltaTime
-                );
+                time += Time.deltaTime;
+                float t = time / fadeDuration;
 
-                timer += Time.deltaTime;
-
-                if (timer > 5f) // ⛑️ anti stuck
-                {
-                    Debug.LogWarning("Fade timeout!");
-                    break;
-                }
-
+                faderGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
                 yield return null;
             }
 
             faderGroup.alpha = targetAlpha;
 
-            if (targetAlpha <= 0)
-            {
-                faderGroup.blocksRaycasts = false;
-                faderGroup.interactable = false;
-            }
-            else
-            {
-                faderGroup.blocksRaycasts = true;
-                faderGroup.interactable = true;
-            }
+            // Block raycast kalau masih hitam
+            faderGroup.blocksRaycasts = targetAlpha > 0.9f;
+            faderGroup.interactable = targetAlpha > 0.9f;
         }
 
+        // ================= QUIT =================
         public void QuitGame()
         {
-            // Log untuk memastikan tombol ditekan (muncul di Console)
             Debug.Log("Game dihentikan...");
-
-            // Jika game sedang berjalan sebagai aplikasi build (.exe, .apk, dsb)
             Application.Quit();
 
-            // Jika kamu sedang testing di Unity Editor (opsional, agar editor stop Play)
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
-        }   
+        }
+
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
 
 #if UNITY_EDITOR
         private void OnValidate()
-    {
-        if (mainMenu != null) mainMenu.UpdateSceneName();
-        if (Tutorial != null) Tutorial.UpdateSceneName();
-        if (gameplay != null) gameplay.UpdateSceneName();
-        if (gameOver != null) gameOver.UpdateSceneName();
-    }
+        {
+            if (mainMenu != null) mainMenu.UpdateSceneName();
+            if (Tutorial != null) Tutorial.UpdateSceneName();
+            if (gameplay != null) gameplay.UpdateSceneName();
+            if (gameOver != null) gameOver.UpdateSceneName();
+            if (winner != null) winner.UpdateSceneName();
+        }
 #endif
     }
 }

@@ -37,4 +37,4 @@ MonoBehaviour:
   _resultPrefabs:
   - {fileID: 5485417267940259033, guid: 2299dda3913a29045b5f70b3203888e9, type: 3}
   _cookedScore: 15
-  _foodIcon: {fileID: 21300000, guid: f1dd0942720ee9f47929912ef99daae5, type: 3}
+  _foodIcon: {fileID: -1350085588, guid: 9b362147b8f4be048b6aed0f9aedc855, type: 3}

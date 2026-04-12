@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 
@@ -9,25 +9,41 @@ namespace CookOrPanic.WinSequenceManager
         [Header("Chef & Animasi")]
         [SerializeField] private GameObject _headChef;
         [SerializeField] private Animator _chefAnimator;
-        [SerializeField] private Transform _doorTarget; // Target lokasi pintu
+        [SerializeField] private Transform _doorTarget;
 
         [Header("Topi")]
         [SerializeField] private GameObject _hatAtHand;
+        [SerializeField] private Transform _rightHand;
 
         [Header("Victory UI")]
         [SerializeField] private GameObject _winPanel;
 
         [Header("Settings")]
-        [SerializeField] private float _walkDuration = 3.0f; // Berapa lama chef jalan ke pintu
+        [SerializeField] private float _walkDuration = 3.0f;
         [SerializeField] private float _fadeDuration = 1.0f;
-        [SerializeField] private float _delayBeforeWinPanel = 1.5f; // Jeda setelah chef hilang sampai panel muncul
+        [SerializeField] private float _delayBeforeWinPanel = 1.5f;
+        [SerializeField] private float _idleDuration = 1.5f;
+
+        private bool _isFollowingHand = false;
 
         private void Start()
         {
-            // Pastikan panel menang mati di awal
             if (_winPanel != null) _winPanel.SetActive(false);
 
+            if (_hatAtHand != null)
+                _hatAtHand.SetActive(false);
+
             TriggerWinSequence();
+        }
+
+        private void LateUpdate()
+        {
+            // 🔥 FOLLOW TANPA SCRIPT TAMBAHAN
+            if (_isFollowingHand && _hatAtHand != null && _rightHand != null)
+            {
+                _hatAtHand.transform.position = _rightHand.position;
+                _hatAtHand.transform.rotation = _rightHand.rotation;
+            }
         }
 
         public void TriggerWinSequence()
@@ -47,66 +63,75 @@ namespace CookOrPanic.WinSequenceManager
             if (_hatAtHand != null)
             {
                 _hatAtHand.SetActive(true);
-                Rigidbody rb = _hatAtHand.GetComponent<Rigidbody>();
-                if (rb != null)
+
+                // 🔥 Aktifkan follow manual
+                _isFollowingHand = true;
+
+                var grab = _hatAtHand.GetComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
+                if (grab != null)
                 {
-                    rb.isKinematic = true;
-                    rb.useGravity = false;
+                    grab.throwOnDetach = false;
                 }
             }
         }
 
-        // --- PANGGIL INI SAAT TOPI DIAMBIL ---
+        // 🔥 DIPANGGIL SAAT TOPI DIAMBIL
         public void OnHatPickedUp()
         {
+            if (_hatAtHand == null) return;
+
+            // 🔥 MATIKAN FOLLOW (INI KUNCI)
+            _isFollowingHand = false;
+
+            // 🔥 biar tidak nembus tangan
+            _hatAtHand.transform.position += Vector3.up * 0.1f;
+
             StartCoroutine(AfterGrabRoutine());
         }
 
         private IEnumerator AfterGrabRoutine()
         {
+            if (_chefAnimator != null)
+            {
+                _chefAnimator.SetTrigger("Idle");
+                _chefAnimator.SetBool("isWalking", false);
+            }
+
+            yield return new WaitForSeconds(_idleDuration);
+
+            if (_chefAnimator != null)
+            {
+                _chefAnimator.SetBool("isWalking", true);
+            }
+
             if (_headChef != null && _doorTarget != null)
             {
-                // 1. Matikan Physics agar tidak bentrok dengan DOMove
                 Rigidbody rbChef = _headChef.GetComponent<Rigidbody>();
                 if (rbChef != null) rbChef.isKinematic = true;
 
-                // 2. Trigger animasi jalan
-                if (_chefAnimator != null)
-                {
-                    _chefAnimator.SetBool("IsWalking", true);
-                    // Pastikan "Apply Root Motion" di Animator OFF jika menggunakan DOMove
-                }
-
-                // 3. FIX MELAYANG: Paksa target koordinat Y sama dengan posisi Chef saat ini
-                Vector3 floorLevelTarget = new Vector3(
+                Vector3 target = new Vector3(
                     _doorTarget.position.x,
                     _headChef.transform.position.y,
                     _doorTarget.position.z
                 );
 
-                // 4. Hadap ke pintu (Rotasi)
-                _headChef.transform.DOLookAt(floorLevelTarget, 0.5f);
-
-                // 5. Jalan ke pintu (Posisi)
-                _headChef.transform.DOMove(floorLevelTarget, _walkDuration).SetEase(Ease.Linear);
+                _headChef.transform.DOLookAt(target, 0.5f);
+                _headChef.transform.DOMove(target, _walkDuration).SetEase(Ease.Linear);
             }
 
-            // Tunggu sampai hampir sampai di pintu
             yield return new WaitForSeconds(_walkDuration - _fadeDuration);
 
-            // 6. Efek menghilang (Fade Out)
-            Renderer[] allRenderers = _headChef.GetComponentsInChildren<Renderer>();
-            foreach (Renderer r in allRenderers)
+            Renderer[] renderers = _headChef.GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in renderers)
             {
-                // Pastikan Material mendukung transparansi (Mode: Transparent/Fade)
                 r.material.DOFade(0, _fadeDuration);
             }
 
             yield return new WaitForSeconds(_fadeDuration);
 
-            if (_headChef != null) _headChef.SetActive(false);
+            if (_headChef != null)
+                _headChef.SetActive(false);
 
-            // 7. Munculkan Panel Winner
             yield return new WaitForSeconds(_delayBeforeWinPanel);
 
             if (_winPanel != null)
